@@ -1,0 +1,76 @@
+---
+title: "Sleep Health and Lifestyle"
+author: "Mert Baki Dogan"
+date: "`r Sys.Date()`"
+format: 
+  html: 
+    toc: true
+    toc_float: true
+    embed-resources: true
+    code-fold: true
+    code-summary: "Code anzeigen"
+---
+
+```{r = packets, include=FALSE}
+library(tidyverse)
+library(tidymodels)
+library(explore)
+library(ranger)
+```
+
+# Aufgabenstellung
+
+In dieser Arbeit soll untersucht werden wie sich unterschiedliche Faktoren auf die Schlafqualität auswirken. Dabei wird nicht nur untersucht wie sich die Faktoren auswirken, sonder auch wie stark sie sich auswirken
+
+Hierzu steht uns der Datensatz *Sleep Health and Lifestyle Dataset* zur verfügung. Der Datensatz liefert uns Daten über den Lifestyle und die Schlafqualität unterschiedlichter Personen. Zu finden ist dieser Datensatz unter <https://www.kaggle.com/datasets/uom190346a/sleep-health-and-lifestyle-dataset>
+
+Zuerst stellen wir zwei Thesen auf, auf die wir den Datensatz untersuchen möchten:
+
+**These 1: Wenig Stress und viel Körperliche Aktivität hat einen großen Einfluss auf eine gute Schlafqualität**
+
+**These 2: Mit dem Alter nimmt die Schlafqualität ab**
+
+Zuerst lesen wird die Daten ein
+
+```{r, message=FALSE}
+sleep_data <- read.csv("Sleep_health_and_lifestyle_dataset.csv")
+```
+
+**TODO: Kurz wie was wir mir den Datensatz machen**
+
+Schauen wir uns die Daten nun einmal an
+
+```{r}
+#sleep_data
+knitr::kable(head(sleep_data), caption = "Das Spaltenformat des eingelesenen Datensatzes")
+```
+Der Datensatz hat **`r nrow(sleep_data)`** Zeilen und **`r ncol(sleep_data)`** Spalten.
+
+
+Die Variablen haben folgende Bedeutung:
+
+| Variable                | Type | Bedeutung |
+|-------------------------|------|-----------|
+| Person.ID               |      |           |
+| Gender                  |      |           |
+| Age                     |      |           |
+| Occupation              |      |           |
+| Sleep.Duration          |      |           |
+| Quality.of.Sleep        |      |           |
+| Physical.Activity.Level |      |           |
+| Stress.Level            |      |           |
+| BMI.Category            |      |           |
+| Blood.Pressure          |      |           |
+| Hearth.Rate             |      |           |
+| Daily.Steps             |      |           |
+| Sleep.Disorder          |      |           |
+
+
+Zunächst verschaffen wir uns einen Überblick über die Daten. 
+
+```{r, message=FALSE}
+glimpse(sleep_data)
+summary(sleep_data)
+```
+
+
