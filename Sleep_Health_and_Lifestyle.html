@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Mert Baki Dogan">
-<meta name="dcterms.date" content="2025-10-26">
+<meta name="dcterms.date" content="2025-10-28">
 
 <title>Sleep Health and Lifestyle</title>
 <style>
@@ -2181,6 +2181,7 @@ vertical-align: -.125em;
    
   <ul>
   <li><a href="#aufgabenstellung" id="toc-aufgabenstellung" class="nav-link active" data-scroll-target="#aufgabenstellung">Aufgabenstellung</a></li>
+  <li><a href="#daten-aufbereiten" id="toc-daten-aufbereiten" class="nav-link" data-scroll-target="#daten-aufbereiten">Daten aufbereiten</a></li>
   </ul>
 </nav>
 </div>
@@ -2205,7 +2206,7 @@ vertical-align: -.125em;
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">October 26, 2025</p>
+      <p class="date">October 28, 2025</p>
     </div>
   </div>
   
@@ -2232,7 +2233,7 @@ vertical-align: -.125em;
 </details>
 </div>
 <p><strong>TODO: Kurz wie was wir mir den Datensatz machen</strong></p>
-<p>Schauen wir uns die Daten nun einmal an</p>
+<p>Schauen wir uns die Daten zunächst einmal an.</p>
 <div class="cell">
 <details class="code-fold">
 <summary>Code anzeigen</summary>
@@ -2503,6 +2504,106 @@ $ Sleep.Disorder          &lt;chr&gt; &quot;None&quot;, &quot;None&quot;, &quot;
                    
                    
                    </code></pre>
+</div>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Code anzeigen</summary>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>sleep_data <span class="sc">%&gt;%</span> <span class="fu">describe</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 13 × 8
+   variable                type     na na_pct unique    min    mean     max
+   &lt;chr&gt;                   &lt;chr&gt; &lt;int&gt;  &lt;dbl&gt;  &lt;int&gt;  &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;
+ 1 Person.ID               int       0      0    374    1    188.     374  
+ 2 Gender                  chr       0      0      2   NA     NA       NA  
+ 3 Age                     int       0      0     31   27     42.2     59  
+ 4 Occupation              chr       0      0     11   NA     NA       NA  
+ 5 Sleep.Duration          dbl       0      0     27    5.8    7.13     8.5
+ 6 Quality.of.Sleep        int       0      0      6    4      7.31     9  
+ 7 Physical.Activity.Level int       0      0     16   30     59.2     90  
+ 8 Stress.Level            int       0      0      6    3      5.39     8  
+ 9 BMI.Category            chr       0      0      4   NA     NA       NA  
+10 Blood.Pressure          chr       0      0     25   NA     NA       NA  
+11 Heart.Rate              int       0      0     19   65     70.2     86  
+12 Daily.Steps             int       0      0     20 3000   6817.   10000  
+13 Sleep.Disorder          chr       0      0      3   NA     NA       NA  </code></pre>
+</div>
+<details class="code-fold">
+<summary>Code anzeigen</summary>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>sleep_data <span class="sc">%&gt;%</span> <span class="fu">describe_tbl</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>374 observations with 13 variables
+0 observations containing missings (NA)
+0 variables containing missings (NA)
+0 variables with no variance</code></pre>
+</div>
+</div>
+<p><em>Person.ID</em> nummeriert die unterschiedlichen Personen durch und ist deshalb für uns irrelevant. Auch mit <em>Occupation</em> gibt uns keine relatvaten Informationen. Erstrecht da wir eine <em>Stress.Level</em> Variable haben. Aus diesem Grund werden wir <em>Person.ID</em> und <em>Occupation</em> später entfernen.</p>
+<p>Ansonsten scheint der Rest der Daten relevant und korrect zu sein.</p>
+</section>
+<section id="daten-aufbereiten" class="level1">
+<h1>Daten aufbereiten</h1>
+<p>Erstellen wir unseren finalen Datensatz und entfernen alle nicht verwendeten Variableln.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code anzeigen</summary>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>final_sleep_data <span class="ot">&lt;-</span> </span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  sleep_data <span class="sc">%&gt;%</span> </span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>Person.ID, <span class="sc">-</span>Occupation)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>Wir wandeln das Geschlecht in ein Faktor um, da es sich dabei um eine Kategorie handelt</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code anzeigen</summary>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>final_sleep_data<span class="sc">$</span>Gender <span class="ot">&lt;-</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as.factor</span>(final_sleep_data<span class="sc">$</span>Gender)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>Da wir uns nicht für die unterschiedlichen Schalfstörungen interesierten, geben wir nur an ob eine Schlafstörung vorhanden ist.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code anzeigen</summary>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>final_sleep_data <span class="ot">&lt;-</span> </span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  final_sleep_data <span class="sc">%&gt;%</span> </span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Sleep.Disorder =</span> Sleep.Disorder <span class="sc">!=</span> <span class="st">&quot;None&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>Um die Lesbarkeit zu verbesser wandel wir die <em>Sleep.Discorder</em> variable auch in einen Faktor um</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code anzeigen</summary>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>final_sleep_data<span class="sc">$</span>Sleep.Disorder <span class="ot">&lt;-</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">if_else</span>(final_sleep_data<span class="sc">$</span>Sleep.Disorder, <span class="st">&quot;Has sleep disorder&quot;</span>, <span class="st">&quot;Has no sleep disorder&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_factor</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>Um auch die Lesbarkeit zu verberssern wandeln wir die <em>BMI.Category</em> zu einem Faktor um. Dabei bearchten wir aber die Reihenfolge der Kategorien.</p>
+<p>Dazu schauen wir uns erstmal an welche Kategorien in <em>BMI.Category</em> enthalten sind.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code anzeigen</summary>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">unique</span>(final_sleep_data<span class="sc">$</span>BMI.Category)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] &quot;Overweight&quot;    &quot;Normal&quot;        &quot;Obese&quot;         &quot;Normal Weight&quot;</code></pre>
+</div>
+</div>
+<p>Es gibt 4 Kategorien. Sortiert ergibt das also: <em>“Normal” &lt; “Normal Weight” &lt; “Overweight” &lt; “Obese”</em></p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code anzeigen</summary>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>final_sleep_data<span class="sc">$</span>BMI.Category <span class="ot">&lt;-</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>  final_sleep_data<span class="sc">$</span>BMI.Category <span class="sc">%&gt;%</span></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">if_else</span>(. <span class="sc">==</span> <span class="st">&quot;Normal Weight&quot;</span>, <span class="st">&quot;Normal&quot;</span>, .) <span class="sc">%&gt;%</span></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">factor</span>(<span class="at">levels =</span> <span class="fu">c</span>(<span class="st">&quot;Normal&quot;</span>, <span class="st">&quot;Normal Weight&quot;</span>,<span class="st">&quot;Overweight&quot;</span>, <span class="st">&quot;Obese&quot;</span>))</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a><span class="fu">unique</span>(final_sleep_data<span class="sc">$</span>BMI.Category)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] Overweight Normal     Obese     
+Levels: Normal Normal Weight Overweight Obese</code></pre>
 </div>
 </div>
 </section>

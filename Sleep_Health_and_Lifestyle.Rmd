@@ -38,7 +38,7 @@ sleep_data <- read.csv("Sleep_health_and_lifestyle_dataset.csv")
 
 **TODO: Kurz wie was wir mir den Datensatz machen**
 
-Schauen wir uns die Daten nun einmal an
+Schauen wir uns die Daten zunächst einmal an.
 
 ```{r}
 #sleep_data
@@ -72,5 +72,71 @@ Zunächst verschaffen wir uns einen Überblick über die Daten.
 glimpse(sleep_data)
 summary(sleep_data)
 ```
+```{r, message=FALSE}
+sleep_data %>% describe()
+sleep_data %>% describe_tbl()
+```
+
+*Person.ID* nummeriert die unterschiedlichen Personen durch und ist deshalb für uns irrelevant. Auch mit *Occupation* gibt uns keine relatvaten Informationen. Erstrecht da wir eine *Stress.Level* Variable haben.
+Aus diesem Grund werden wir *Person.ID* und *Occupation* später entfernen.
+
+Ansonsten scheint der Rest der Daten relevant und korrect zu sein.
+
+# Daten aufbereiten
+
+Erstellen wir unseren finalen Datensatz und entfernen alle nicht verwendeten Variableln.
+
+```{r, message=FALSE}
+final_sleep_data <- 
+  sleep_data %>% 
+  select(-Person.ID, -Occupation)
+```
+
+Wir wandeln das Geschlecht in ein Faktor um, da es sich dabei um eine Kategorie handelt
+
+```{r, message=FALSE}
+final_sleep_data$Gender <-
+  as.factor(final_sleep_data$Gender)
+```
+
+Da wir uns nicht für die unterschiedlichen Schalfstörungen interesierten, geben wir nur an ob eine Schlafstörung vorhanden ist.
+
+```{r, message=FALSE}
+final_sleep_data <- 
+  final_sleep_data %>% 
+  mutate(Sleep.Disorder = Sleep.Disorder != "None")
+```
+
+Um die Lesbarkeit zu verbesser wandel wir die *Sleep.Discorder* variable auch in einen Faktor um
+
+```{r, message=FALSE}
+final_sleep_data$Sleep.Disorder <-
+  if_else(final_sleep_data$Sleep.Disorder, "Has sleep disorder", "Has no sleep disorder") %>%
+  as_factor()
+```
+
+Um auch die Lesbarkeit zu verberssern wandeln wir die *BMI.Category* zu einem Faktor um. Dabei bearchten wir aber die Reihenfolge der Kategorien.
+
+Dazu schauen wir uns erstmal an welche Kategorien in *BMI.Category* enthalten sind.
+
+```{r, message=FALSE}
+unique(final_sleep_data$BMI.Category)
+```
+
+Es gibt 4 Kategorien. Sortiert ergibt das also: *"Normal" < "Normal Weight" < "Overweight" < "Obese"*
+
+```{r, message=FALSE}
+final_sleep_data$BMI.Category <-
+  final_sleep_data$BMI.Category %>%
+  if_else(. == "Normal Weight", "Normal", .) %>%
+  factor(levels = c("Normal", "Normal Weight","Overweight", "Obese"))
+unique(final_sleep_data$BMI.Category)
+```
+
+
+
+
+
+
 
 
