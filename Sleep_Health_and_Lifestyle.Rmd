@@ -133,6 +133,48 @@ final_sleep_data$BMI.Category <-
 unique(final_sleep_data$BMI.Category)
 ```
 
+# Finales Datenset
+
+```{r}
+summary(final_sleep_data)
+```
+
+# Wie wirkt sich Körperliche Aktivität und Stress auf die Schlaf Qualität aus?
+
+```{r}
+percent_sleep_data <- final_sleep_data %>%
+  select(Quality.of.Sleep, Stress.Level, Physical.Activity.Level, Daily.Steps) %>%
+  mutate(
+    Stress.Level = 100 * (Stress.Level - min(Stress.Level)) / (max(Stress.Level) - min(Stress.Level)),
+    Physical.Activity.Level = 100 * (Physical.Activity.Level - min(Physical.Activity.Level)) / (max(Physical.Activity.Level) -     min(Physical.Activity.Level)),
+    Daily.Steps = 100 * (Daily.Steps - min(Daily.Steps)) / (max(Daily.Steps) - min(Daily.Steps))
+  ) %>%
+  pivot_longer(
+    cols = c(Physical.Activity.Level, Stress.Level, Daily.Steps),
+    names_to = "Variable",
+    values_to = "Value"
+  )
+```
+
+
+```{r message=FALSE, warning=FALSE}
+ggplot(
+  data = percent_sleep_data,
+  mapping = aes(x = Quality.of.Sleep, y = Value, colour = Variable)
+) +
+  geom_smooth()
+```
+
+# Wie verändert sich die Schlafqualität im Alter
+
+```{r, message=FALSE, warning=FALSE}
+ggplot(
+  data = final_sleep_data,
+  mapping = aes(x = Quality.of.Sleep, y = Age)
+) + 
+  geom_smooth() +
+  geom_point()
+```
 
 
 
