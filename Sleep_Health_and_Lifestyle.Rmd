@@ -131,7 +131,7 @@ final_sleep_data$BMI.Category <-
 
 Am Ende werfen wir noch einen kurzen Blick ins finale Datenset.
 
-```{r}
+```{r, message=FALSE}
 knitr::kable(head(final_sleep_data), caption = "Das Finale Datenset")
 ```
 
@@ -139,7 +139,7 @@ Nach dem wir das Datensetz fertig aufbereiten haben, widmen wir uns um unserer e
 
 # Wie wirkt sich Körperliche Aktivität und Stress auf die Schlaf Qualität aus?
 
-```{r}
+```{r, message=FALSE}
 percent_sleep_data <- final_sleep_data %>%
   select(Quality.of.Sleep, Stress.Level, Physical.Activity.Level, Daily.Steps) %>%
   mutate(
