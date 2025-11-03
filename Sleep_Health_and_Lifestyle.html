@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Mert Baki Dogan">
-<meta name="dcterms.date" content="2025-11-01">
+<meta name="dcterms.date" content="2025-11-03">
 
 <title>Sleep Health and Lifestyle</title>
 <style>
@@ -2182,7 +2182,6 @@ vertical-align: -.125em;
   <ul>
   <li><a href="#aufgabenstellung" id="toc-aufgabenstellung" class="nav-link active" data-scroll-target="#aufgabenstellung">Aufgabenstellung</a></li>
   <li><a href="#daten-aufbereiten" id="toc-daten-aufbereiten" class="nav-link" data-scroll-target="#daten-aufbereiten">Daten aufbereiten</a></li>
-  <li><a href="#finales-datenset" id="toc-finales-datenset" class="nav-link" data-scroll-target="#finales-datenset">Finales Datenset</a></li>
   <li><a href="#wie-wirkt-sich-körperliche-aktivität-und-stress-auf-die-schlaf-qualität-aus" id="toc-wie-wirkt-sich-körperliche-aktivität-und-stress-auf-die-schlaf-qualität-aus" class="nav-link" data-scroll-target="#wie-wirkt-sich-körperliche-aktivität-und-stress-auf-die-schlaf-qualität-aus">Wie wirkt sich Körperliche Aktivität und Stress auf die Schlaf Qualität aus?</a></li>
   <li><a href="#wie-verändert-sich-die-schlafqualität-im-alter" id="toc-wie-verändert-sich-die-schlafqualität-im-alter" class="nav-link" data-scroll-target="#wie-verändert-sich-die-schlafqualität-im-alter">Wie verändert sich die Schlafqualität im Alter</a></li>
   </ul>
@@ -2209,7 +2208,7 @@ vertical-align: -.125em;
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">November 1, 2025</p>
+      <p class="date">November 3, 2025</p>
     </div>
   </div>
   
@@ -2223,25 +2222,24 @@ vertical-align: -.125em;
 
 <section id="aufgabenstellung" class="level1">
 <h1>Aufgabenstellung</h1>
-<p>In dieser Arbeit soll untersucht werden wie sich unterschiedliche Faktoren auf die Schlafqualität auswirken. Dabei wird nicht nur untersucht wie sich die Faktoren auswirken, sonder auch wie stark sie sich auswirken</p>
-<p>Hierzu steht uns der Datensatz <em>Sleep Health and Lifestyle Dataset</em> zur verfügung. Der Datensatz liefert uns Daten über den Lifestyle und die Schlafqualität unterschiedlichter Personen. Zu finden ist dieser Datensatz unter <a href="https://www.kaggle.com/datasets/uom190346a/sleep-health-and-lifestyle-dataset" class="uri">https://www.kaggle.com/datasets/uom190346a/sleep-health-and-lifestyle-dataset</a></p>
-<p>Zuerst stellen wir zwei Thesen auf, auf die wir den Datensatz untersuchen möchten:</p>
+<p>In dieser Arbeit soll untersucht werden, wie sich verschiedene Faktoren auf die Schlafqualität auswirken. Dabei geht es nicht nur darum, ob sich diese Faktoren auswirken, sondern auch wie stark ihr Einfluss ist.</p>
+<p>Dazu setht und der Datensatz <em>Sleep Health and Lifestyle Dataset</em> zur Verfügung. Dieser Datensatz enthält Informationen über den Lebensstile und die Schlafqualität verschiedener Personen. Er ist unter folgendem Link zu finden: <a href="https://www.kaggle.com/datasets/uom190346a/sleep-health-and-lifestyle-dataset" class="uri">https://www.kaggle.com/datasets/uom190346a/sleep-health-and-lifestyle-dataset</a></p>
+<p>Zu Beginn formulieren wir zwei Thesen, die wir mit Hilfe des Datensatzes überprüfen möchen.</p>
 <p><strong>These 1: Wenig Stress und viel Körperliche Aktivität hat einen großen Einfluss auf eine gute Schlafqualität</strong></p>
 <p><strong>These 2: Mit dem Alter nimmt die Schlafqualität ab</strong></p>
-<p>Zuerst lesen wird die Daten ein</p>
+<p>Diese Thesen sollen regressiv untersucht werden. Weitere Thesen werden sich eventuell bei der Sichtung der Daten ergeben.</p>
+<p>Im nächsten Schritt werden die Daten eingelesen.</p>
 <div class="cell">
 <details class="code-fold">
 <summary>Code anzeigen</summary>
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>sleep_data <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">&quot;Sleep_health_and_lifestyle_dataset.csv&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<p><strong>TODO: Kurz wie was wir mir den Datensatz machen</strong></p>
 <p>Schauen wir uns die Daten zunächst einmal an.</p>
 <div class="cell">
 <details class="code-fold">
 <summary>Code anzeigen</summary>
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co">#sleep_data</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(<span class="fu">head</span>(sleep_data), <span class="at">caption =</span> <span class="st">&quot;Das Spaltenformat des eingelesenen Datensatzes&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(<span class="fu">head</span>(sleep_data), <span class="at">caption =</span> <span class="st">&quot;Das Spaltenformat des eingelesenen Datensatzes&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <table class="caption-top table table-sm table-striped small">
@@ -2376,6 +2374,11 @@ vertical-align: -.125em;
 <p>Der Datensatz hat <strong>374</strong> Zeilen und <strong>13</strong> Spalten.</p>
 <p>Die Variablen haben folgende Bedeutung:</p>
 <table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
 <thead>
 <tr class="header">
 <th>Variable</th>
@@ -2386,68 +2389,68 @@ vertical-align: -.125em;
 <tbody>
 <tr class="odd">
 <td>Person.ID</td>
-<td></td>
-<td></td>
+<td>int</td>
+<td>Kennung für jede Person</td>
 </tr>
 <tr class="even">
 <td>Gender</td>
-<td></td>
-<td></td>
+<td>chr</td>
+<td>Geschlecht (“Male”/“Female”)</td>
 </tr>
 <tr class="odd">
 <td>Age</td>
-<td></td>
-<td></td>
+<td>int</td>
+<td>Alter</td>
 </tr>
 <tr class="even">
 <td>Occupation</td>
-<td></td>
-<td></td>
+<td>chr</td>
+<td>Beruf</td>
 </tr>
 <tr class="odd">
 <td>Sleep.Duration</td>
-<td></td>
-<td></td>
+<td>dbl</td>
+<td>Anzahl der Studen, die die Person am Tag schläft</td>
 </tr>
 <tr class="even">
 <td>Quality.of.Sleep</td>
-<td></td>
-<td></td>
+<td>int</td>
+<td>Subjektive Bewertung der Schlafqualität (1-10)</td>
 </tr>
 <tr class="odd">
 <td>Physical.Activity.Level</td>
-<td></td>
-<td></td>
+<td>int</td>
+<td>Tägliche Aktivität in Minuten</td>
 </tr>
 <tr class="even">
 <td>Stress.Level</td>
-<td></td>
-<td></td>
+<td>int</td>
+<td>Subjektive Bewertung des Stresslevels (1-10)</td>
 </tr>
 <tr class="odd">
 <td>BMI.Category</td>
-<td></td>
-<td></td>
+<td>chr</td>
+<td>BMI Kategorie</td>
 </tr>
 <tr class="even">
 <td>Blood.Pressure</td>
-<td></td>
-<td></td>
+<td>char</td>
+<td>Blutdruck (sysolisch/diastolisch)</td>
 </tr>
 <tr class="odd">
 <td>Hearth.Rate</td>
-<td></td>
-<td></td>
+<td>int</td>
+<td>Ruheherzfrequenz</td>
 </tr>
 <tr class="even">
 <td>Daily.Steps</td>
-<td></td>
-<td></td>
+<td>int</td>
+<td>Tägliche Schritte</td>
 </tr>
 <tr class="odd">
 <td>Sleep.Disorder</td>
-<td></td>
-<td></td>
+<td>chr</td>
+<td>Schlafstörung (Keine, Insomnie, Schlafaqnoe)</td>
 </tr>
 </tbody>
 </table>
@@ -2543,12 +2546,12 @@ $ Sleep.Disorder          &lt;chr&gt; &quot;None&quot;, &quot;None&quot;, &quot;
 0 variables with no variance</code></pre>
 </div>
 </div>
-<p><em>Person.ID</em> nummeriert die unterschiedlichen Personen durch und ist deshalb für uns irrelevant. Auch mit <em>Occupation</em> gibt uns keine relatvaten Informationen. Erstrecht da wir eine <em>Stress.Level</em> Variable haben. Aus diesem Grund werden wir <em>Person.ID</em> und <em>Occupation</em> später entfernen.</p>
-<p>Ansonsten scheint der Rest der Daten relevant und korrect zu sein.</p>
+<p><em>Person.ID</em> nummeriert lediglich die verschiedenen Personen durch und ist deshalb für uns nicht relevant. Auch die Variable <em>Occupation</em> liefert uns keine relevanten Informationen. Vor allem, da wir bereits die <em>Stress.Level</em> Variable haben. Aus diesem Grund werden wir <em>Person.ID</em> und <em>Occupation</em> später aus dem Datensatz entfernen.</p>
+<p>Ansonsten scheint der Rest der Daten relevant und korrekt zu sein.</p>
 </section>
 <section id="daten-aufbereiten" class="level1">
 <h1>Daten aufbereiten</h1>
-<p>Erstellen wir unseren finalen Datensatz und entfernen alle nicht verwendeten Variableln.</p>
+<p>Erstellen wir unseren finalen Datensatz und entfernen alle nicht relevanten Variableln.</p>
 <div class="cell">
 <details class="code-fold">
 <summary>Code anzeigen</summary>
@@ -2557,7 +2560,7 @@ $ Sleep.Disorder          &lt;chr&gt; &quot;None&quot;, &quot;None&quot;, &quot;
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>Person.ID, <span class="sc">-</span>Occupation)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<p>Wir wandeln das Geschlecht in ein Faktor um, da es sich dabei um eine Kategorie handelt</p>
+<p>Das Geschlecht ist eine kategorschie Variable. Wandeln wird sie für eine einfachere weiterverarbeitung in einen Faktor um.</p>
 <div class="cell">
 <details class="code-fold">
 <summary>Code anzeigen</summary>
@@ -2565,7 +2568,7 @@ $ Sleep.Disorder          &lt;chr&gt; &quot;None&quot;, &quot;None&quot;, &quot;
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as.factor</span>(final_sleep_data<span class="sc">$</span>Gender)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<p>Da wir uns nicht für die unterschiedlichen Schalfstörungen interesierten, geben wir nur an ob eine Schlafstörung vorhanden ist.</p>
+<p>Da für uns nicht relevant ist um welche Schlafstörung es sich genau handelt, geben wir nur an ab eine Schlafstörung vorhanden ist.</p>
 <div class="cell">
 <details class="code-fold">
 <summary>Code anzeigen</summary>
@@ -2574,7 +2577,7 @@ $ Sleep.Disorder          &lt;chr&gt; &quot;None&quot;, &quot;None&quot;, &quot;
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Sleep.Disorder =</span> Sleep.Disorder <span class="sc">!=</span> <span class="st">&quot;None&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<p>Um die Lesbarkeit zu verbesser wandel wir die <em>Sleep.Discorder</em> variable auch in einen Faktor um</p>
+<p>Um die Lesbarkeit zu verbesser wandel wir die <em>Sleep.Discorder</em> Variable, zu zwei Kategorien um.</p>
 <div class="cell">
 <details class="code-fold">
 <summary>Code anzeigen</summary>
@@ -2583,7 +2586,7 @@ $ Sleep.Disorder          &lt;chr&gt; &quot;None&quot;, &quot;None&quot;, &quot;
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_factor</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<p>Um auch die Lesbarkeit zu verberssern wandeln wir die <em>BMI.Category</em> zu einem Faktor um. Dabei bearchten wir aber die Reihenfolge der Kategorien.</p>
+<p>Um die Weiterverarbeitung zu vereinfachen, wandeln wir die <em>BMI.Category</em> zu einem Faktor um. Dabei bearchten wir aber auch die Reihenfolge der Kategorien.</p>
 <p>Dazu schauen wir uns erstmal an welche Kategorien in <em>BMI.Category</em> enthalten sind.</p>
 <div class="cell">
 <details class="code-fold">
@@ -2600,75 +2603,158 @@ $ Sleep.Disorder          &lt;chr&gt; &quot;None&quot;, &quot;None&quot;, &quot;
 <summary>Code anzeigen</summary>
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>final_sleep_data<span class="sc">$</span>BMI.Category <span class="ot">&lt;-</span></span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>  final_sleep_data<span class="sc">$</span>BMI.Category <span class="sc">%&gt;%</span></span>
-<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">if_else</span>(. <span class="sc">==</span> <span class="st">&quot;Normal Weight&quot;</span>, <span class="st">&quot;Normal&quot;</span>, .) <span class="sc">%&gt;%</span></span>
-<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">factor</span>(<span class="at">levels =</span> <span class="fu">c</span>(<span class="st">&quot;Normal&quot;</span>, <span class="st">&quot;Normal Weight&quot;</span>,<span class="st">&quot;Overweight&quot;</span>, <span class="st">&quot;Obese&quot;</span>))</span>
-<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a><span class="fu">unique</span>(final_sleep_data<span class="sc">$</span>BMI.Category)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">factor</span>(<span class="at">levels =</span> <span class="fu">c</span>(<span class="st">&quot;Normal&quot;</span>, <span class="st">&quot;Normal Weight&quot;</span>,<span class="st">&quot;Overweight&quot;</span>, <span class="st">&quot;Obese&quot;</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] Overweight Normal     Obese     
-Levels: Normal Normal Weight Overweight Obese</code></pre>
 </div>
-</div>
-</section>
-<section id="finales-datenset" class="level1">
-<h1>Finales Datenset</h1>
+<p>Am Ende werfen wir noch einen kurzen Blick ins finale Datenset.</p>
 <div class="cell">
 <details class="code-fold">
 <summary>Code anzeigen</summary>
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(final_sleep_data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(<span class="fu">head</span>(final_sleep_data), <span class="at">caption =</span> <span class="st">&quot;Das Finale Datenset&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
-<div class="cell-output cell-output-stdout">
-<pre><code>    Gender         Age        Sleep.Duration  Quality.of.Sleep
- Female:185   Min.   :27.00   Min.   :5.800   Min.   :4.000   
- Male  :189   1st Qu.:35.25   1st Qu.:6.400   1st Qu.:6.000   
-              Median :43.00   Median :7.200   Median :7.000   
-              Mean   :42.18   Mean   :7.132   Mean   :7.313   
-              3rd Qu.:50.00   3rd Qu.:7.800   3rd Qu.:8.000   
-              Max.   :59.00   Max.   :8.500   Max.   :9.000   
- Physical.Activity.Level  Stress.Level          BMI.Category Blood.Pressure    
- Min.   :30.00           Min.   :3.000   Normal       :216   Length:374        
- 1st Qu.:45.00           1st Qu.:4.000   Normal Weight:  0   Class :character  
- Median :60.00           Median :5.000   Overweight   :148   Mode  :character  
- Mean   :59.17           Mean   :5.385   Obese        : 10                     
- 3rd Qu.:75.00           3rd Qu.:7.000                                         
- Max.   :90.00           Max.   :8.000                                         
-   Heart.Rate     Daily.Steps                  Sleep.Disorder
- Min.   :65.00   Min.   : 3000   Has no sleep disorder:219   
- 1st Qu.:68.00   1st Qu.: 5600   Has sleep disorder   :155   
- Median :70.00   Median : 7000                               
- Mean   :70.17   Mean   : 6817                               
- 3rd Qu.:72.00   3rd Qu.: 8000                               
- Max.   :86.00   Max.   :10000                               </code></pre>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Das Finale Datenset</caption>
+<colgroup>
+<col style="width: 4%">
+<col style="width: 2%">
+<col style="width: 9%">
+<col style="width: 11%">
+<col style="width: 15%">
+<col style="width: 8%">
+<col style="width: 8%">
+<col style="width: 9%">
+<col style="width: 7%">
+<col style="width: 7%">
+<col style="width: 14%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Gender</th>
+<th style="text-align: right;">Age</th>
+<th style="text-align: right;">Sleep.Duration</th>
+<th style="text-align: right;">Quality.of.Sleep</th>
+<th style="text-align: right;">Physical.Activity.Level</th>
+<th style="text-align: right;">Stress.Level</th>
+<th style="text-align: left;">BMI.Category</th>
+<th style="text-align: left;">Blood.Pressure</th>
+<th style="text-align: right;">Heart.Rate</th>
+<th style="text-align: right;">Daily.Steps</th>
+<th style="text-align: left;">Sleep.Disorder</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Male</td>
+<td style="text-align: right;">27</td>
+<td style="text-align: right;">6.1</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">42</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: left;">Overweight</td>
+<td style="text-align: left;">126/83</td>
+<td style="text-align: right;">77</td>
+<td style="text-align: right;">4200</td>
+<td style="text-align: left;">Has no sleep disorder</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Male</td>
+<td style="text-align: right;">28</td>
+<td style="text-align: right;">6.2</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">60</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: left;">Normal</td>
+<td style="text-align: left;">125/80</td>
+<td style="text-align: right;">75</td>
+<td style="text-align: right;">10000</td>
+<td style="text-align: left;">Has no sleep disorder</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Male</td>
+<td style="text-align: right;">28</td>
+<td style="text-align: right;">6.2</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">60</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: left;">Normal</td>
+<td style="text-align: left;">125/80</td>
+<td style="text-align: right;">75</td>
+<td style="text-align: right;">10000</td>
+<td style="text-align: left;">Has no sleep disorder</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Male</td>
+<td style="text-align: right;">28</td>
+<td style="text-align: right;">5.9</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">30</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: left;">Obese</td>
+<td style="text-align: left;">140/90</td>
+<td style="text-align: right;">85</td>
+<td style="text-align: right;">3000</td>
+<td style="text-align: left;">Has sleep disorder</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Male</td>
+<td style="text-align: right;">28</td>
+<td style="text-align: right;">5.9</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">30</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: left;">Obese</td>
+<td style="text-align: left;">140/90</td>
+<td style="text-align: right;">85</td>
+<td style="text-align: right;">3000</td>
+<td style="text-align: left;">Has sleep disorder</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Male</td>
+<td style="text-align: right;">28</td>
+<td style="text-align: right;">5.9</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">30</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: left;">Obese</td>
+<td style="text-align: left;">140/90</td>
+<td style="text-align: right;">85</td>
+<td style="text-align: right;">3000</td>
+<td style="text-align: left;">Has sleep disorder</td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
+<p>Nach dem wir das Datensetz fertig aufbereiten haben, widmen wir uns um unserer ersten These.</p>
 </section>
 <section id="wie-wirkt-sich-körperliche-aktivität-und-stress-auf-die-schlaf-qualität-aus" class="level1">
 <h1>Wie wirkt sich Körperliche Aktivität und Stress auf die Schlaf Qualität aus?</h1>
 <div class="cell">
 <details class="code-fold">
 <summary>Code anzeigen</summary>
-<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>percent_sleep_data <span class="ot">&lt;-</span> final_sleep_data <span class="sc">%&gt;%</span></span>
-<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(Quality.of.Sleep, Stress.Level, Physical.Activity.Level, Daily.Steps) <span class="sc">%&gt;%</span></span>
-<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">Stress.Level =</span> <span class="dv">100</span> <span class="sc">*</span> (Stress.Level <span class="sc">-</span> <span class="fu">min</span>(Stress.Level)) <span class="sc">/</span> (<span class="fu">max</span>(Stress.Level) <span class="sc">-</span> <span class="fu">min</span>(Stress.Level)),</span>
-<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">Physical.Activity.Level =</span> <span class="dv">100</span> <span class="sc">*</span> (Physical.Activity.Level <span class="sc">-</span> <span class="fu">min</span>(Physical.Activity.Level)) <span class="sc">/</span> (<span class="fu">max</span>(Physical.Activity.Level) <span class="sc">-</span>     <span class="fu">min</span>(Physical.Activity.Level)),</span>
-<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">Daily.Steps =</span> <span class="dv">100</span> <span class="sc">*</span> (Daily.Steps <span class="sc">-</span> <span class="fu">min</span>(Daily.Steps)) <span class="sc">/</span> (<span class="fu">max</span>(Daily.Steps) <span class="sc">-</span> <span class="fu">min</span>(Daily.Steps))</span>
-<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
-<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(</span>
-<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">cols =</span> <span class="fu">c</span>(Physical.Activity.Level, Stress.Level, Daily.Steps),</span>
-<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_to =</span> <span class="st">&quot;Variable&quot;</span>,</span>
-<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_to =</span> <span class="st">&quot;Value&quot;</span></span>
-<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>percent_sleep_data <span class="ot">&lt;-</span> final_sleep_data <span class="sc">%&gt;%</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(Quality.of.Sleep, Stress.Level, Physical.Activity.Level, Daily.Steps) <span class="sc">%&gt;%</span></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">Stress.Level =</span> <span class="dv">100</span> <span class="sc">*</span> (Stress.Level <span class="sc">-</span> <span class="fu">min</span>(Stress.Level)) <span class="sc">/</span> (<span class="fu">max</span>(Stress.Level) <span class="sc">-</span> <span class="fu">min</span>(Stress.Level)),</span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">Physical.Activity.Level =</span> <span class="dv">100</span> <span class="sc">*</span> (Physical.Activity.Level <span class="sc">-</span> <span class="fu">min</span>(Physical.Activity.Level)) <span class="sc">/</span> (<span class="fu">max</span>(Physical.Activity.Level) <span class="sc">-</span>     <span class="fu">min</span>(Physical.Activity.Level)),</span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">Daily.Steps =</span> <span class="dv">100</span> <span class="sc">*</span> (Daily.Steps <span class="sc">-</span> <span class="fu">min</span>(Daily.Steps)) <span class="sc">/</span> (<span class="fu">max</span>(Daily.Steps) <span class="sc">-</span> <span class="fu">min</span>(Daily.Steps))</span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(</span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">cols =</span> <span class="fu">c</span>(Physical.Activity.Level, Stress.Level, Daily.Steps),</span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_to =</span> <span class="st">&quot;Variable&quot;</span>,</span>
+<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_to =</span> <span class="st">&quot;Value&quot;</span></span>
+<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <div class="cell">
 <details class="code-fold">
 <summary>Code anzeigen</summary>
-<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(</span>
-<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> percent_sleep_data,</span>
-<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">x =</span> Quality.of.Sleep, <span class="at">y =</span> Value, <span class="at">colour =</span> Variable)</span>
-<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>) <span class="sc">+</span></span>
-<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> percent_sleep_data,</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">x =</span> Quality.of.Sleep, <span class="at">y =</span> Value, <span class="at">colour =</span> Variable)</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>) <span class="sc">+</span></span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <div>
@@ -2684,12 +2770,12 @@ Levels: Normal Normal Weight Overweight Obese</code></pre>
 <div class="cell">
 <details class="code-fold">
 <summary>Code anzeigen</summary>
-<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(</span>
-<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> final_sleep_data,</span>
-<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">x =</span> Quality.of.Sleep, <span class="at">y =</span> Age)</span>
-<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>) <span class="sc">+</span> </span>
-<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>() <span class="sc">+</span></span>
-<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> final_sleep_data,</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">x =</span> Quality.of.Sleep, <span class="at">y =</span> Age)</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>) <span class="sc">+</span> </span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>() <span class="sc">+</span></span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <div>

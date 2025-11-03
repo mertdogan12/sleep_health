@@ -20,71 +20,69 @@ library(ranger)
 
 # Aufgabenstellung
 
-In dieser Arbeit soll untersucht werden wie sich unterschiedliche Faktoren auf die Schlafqualität auswirken. Dabei wird nicht nur untersucht wie sich die Faktoren auswirken, sonder auch wie stark sie sich auswirken
+In dieser Arbeit soll untersucht werden, wie sich verschiedene Faktoren auf die Schlafqualität auswirken. Dabei geht es nicht nur darum, ob sich diese Faktoren auswirken, sondern auch wie stark ihr Einfluss ist.
 
-Hierzu steht uns der Datensatz *Sleep Health and Lifestyle Dataset* zur verfügung. Der Datensatz liefert uns Daten über den Lifestyle und die Schlafqualität unterschiedlichter Personen. Zu finden ist dieser Datensatz unter <https://www.kaggle.com/datasets/uom190346a/sleep-health-and-lifestyle-dataset>
+Dazu setht und der Datensatz *Sleep Health and Lifestyle Dataset* zur Verfügung. Dieser Datensatz enthält Informationen über den Lebensstile und die Schlafqualität verschiedener Personen. Er ist unter folgendem Link zu finden: <https://www.kaggle.com/datasets/uom190346a/sleep-health-and-lifestyle-dataset>
 
-Zuerst stellen wir zwei Thesen auf, auf die wir den Datensatz untersuchen möchten:
+Zu Beginn formulieren wir zwei Thesen, die wir mit Hilfe des Datensatzes überprüfen möchen.
 
 **These 1: Wenig Stress und viel Körperliche Aktivität hat einen großen Einfluss auf eine gute Schlafqualität**
 
 **These 2: Mit dem Alter nimmt die Schlafqualität ab**
 
-Zuerst lesen wird die Daten ein
+Diese Thesen sollen regressiv untersucht werden. Weitere Thesen werden sich eventuell bei der Sichtung der Daten ergeben.
+
+Im nächsten Schritt werden die Daten eingelesen.
 
 ```{r, message=FALSE}
 sleep_data <- read.csv("Sleep_health_and_lifestyle_dataset.csv")
 ```
 
-**TODO: Kurz wie was wir mir den Datensatz machen**
-
 Schauen wir uns die Daten zunächst einmal an.
 
-```{r}
-#sleep_data
+```{r, message=FALSE}
 knitr::kable(head(sleep_data), caption = "Das Spaltenformat des eingelesenen Datensatzes")
 ```
-Der Datensatz hat **`r nrow(sleep_data)`** Zeilen und **`r ncol(sleep_data)`** Spalten.
 
+Der Datensatz hat **`r nrow(sleep_data)`** Zeilen und **`r ncol(sleep_data)`** Spalten.
 
 Die Variablen haben folgende Bedeutung:
 
-| Variable                | Type | Bedeutung |
-|-------------------------|------|-----------|
-| Person.ID               |      |           |
-| Gender                  |      |           |
-| Age                     |      |           |
-| Occupation              |      |           |
-| Sleep.Duration          |      |           |
-| Quality.of.Sleep        |      |           |
-| Physical.Activity.Level |      |           |
-| Stress.Level            |      |           |
-| BMI.Category            |      |           |
-| Blood.Pressure          |      |           |
-| Hearth.Rate             |      |           |
-| Daily.Steps             |      |           |
-| Sleep.Disorder          |      |           |
+| Variable | Type | Bedeutung |
+|----|----|----|
+| Person.ID | int | Kennung für jede Person |
+| Gender | chr | Geschlecht ("Male"/"Female") |
+| Age | int | Alter |
+| Occupation | chr | Beruf |
+| Sleep.Duration | dbl | Anzahl der Studen, die die Person am Tag schläft |
+| Quality.of.Sleep | int | Subjektive Bewertung der Schlafqualität (1-10) |
+| Physical.Activity.Level | int | Tägliche Aktivität in Minuten |
+| Stress.Level | int | Subjektive Bewertung des Stresslevels (1-10) |
+| BMI.Category | chr | BMI Kategorie |
+| Blood.Pressure | char | Blutdruck (sysolisch/diastolisch) |
+| Hearth.Rate | int | Ruheherzfrequenz |
+| Daily.Steps | int | Tägliche Schritte |
+| Sleep.Disorder | chr | Schlafstörung (Keine, Insomnie, Schlafaqnoe) |
 
-
-Zunächst verschaffen wir uns einen Überblick über die Daten. 
+Zunächst verschaffen wir uns einen Überblick über die Daten.
 
 ```{r, message=FALSE}
 glimpse(sleep_data)
 summary(sleep_data)
 ```
+
 ```{r, message=FALSE}
 sleep_data %>% describe()
 sleep_data %>% describe_tbl()
 ```
 
-*Person.ID* nummeriert die unterschiedlichen Personen durch und ist deshalb für uns irrelevant. Auch mit *Occupation* gibt uns keine relatvaten Informationen. Erstrecht da wir eine *Stress.Level* Variable haben.
-Aus diesem Grund werden wir *Person.ID* und *Occupation* später entfernen.
+*Person.ID* nummeriert lediglich die verschiedenen Personen durch und ist deshalb für uns nicht relevant. Auch die Variable *Occupation* liefert uns keine relevanten Informationen. Vor allem, da wir bereits die *Stress.Level* Variable haben. Aus diesem Grund werden wir *Person.ID* und *Occupation* später aus dem Datensatz entfernen.
 
-Ansonsten scheint der Rest der Daten relevant und korrect zu sein.
+Ansonsten scheint der Rest der Daten relevant und korrekt zu sein.
 
 # Daten aufbereiten
 
-Erstellen wir unseren finalen Datensatz und entfernen alle nicht verwendeten Variableln.
+Erstellen wir unseren finalen Datensatz und entfernen alle nicht relevanten Variableln.
 
 ```{r, message=FALSE}
 final_sleep_data <- 
@@ -92,14 +90,14 @@ final_sleep_data <-
   select(-Person.ID, -Occupation)
 ```
 
-Wir wandeln das Geschlecht in ein Faktor um, da es sich dabei um eine Kategorie handelt
+Das Geschlecht ist eine kategorschie Variable. Wandeln wird sie für eine einfachere weiterverarbeitung in einen Faktor um.
 
 ```{r, message=FALSE}
 final_sleep_data$Gender <-
   as.factor(final_sleep_data$Gender)
 ```
 
-Da wir uns nicht für die unterschiedlichen Schalfstörungen interesierten, geben wir nur an ob eine Schlafstörung vorhanden ist.
+Da für uns nicht relevant ist um welche Schlafstörung es sich genau handelt, geben wir nur an ab eine Schlafstörung vorhanden ist.
 
 ```{r, message=FALSE}
 final_sleep_data <- 
@@ -107,7 +105,7 @@ final_sleep_data <-
   mutate(Sleep.Disorder = Sleep.Disorder != "None")
 ```
 
-Um die Lesbarkeit zu verbesser wandel wir die *Sleep.Discorder* variable auch in einen Faktor um
+Um die Lesbarkeit zu verbesser wandel wir die *Sleep.Discorder* Variable, zu zwei Kategorien um.
 
 ```{r, message=FALSE}
 final_sleep_data$Sleep.Disorder <-
@@ -115,7 +113,7 @@ final_sleep_data$Sleep.Disorder <-
   as_factor()
 ```
 
-Um auch die Lesbarkeit zu verberssern wandeln wir die *BMI.Category* zu einem Faktor um. Dabei bearchten wir aber die Reihenfolge der Kategorien.
+Um die Weiterverarbeitung zu vereinfachen, wandeln wir die *BMI.Category* zu einem Faktor um. Dabei bearchten wir aber auch die Reihenfolge der Kategorien.
 
 Dazu schauen wir uns erstmal an welche Kategorien in *BMI.Category* enthalten sind.
 
@@ -123,21 +121,21 @@ Dazu schauen wir uns erstmal an welche Kategorien in *BMI.Category* enthalten si
 unique(final_sleep_data$BMI.Category)
 ```
 
-Es gibt 4 Kategorien. Sortiert ergibt das also: *"Normal" < "Normal Weight" < "Overweight" < "Obese"*
+Es gibt 4 Kategorien. Sortiert ergibt das also: *"Normal" \< "Normal Weight" \< "Overweight" \< "Obese"*
 
 ```{r, message=FALSE}
 final_sleep_data$BMI.Category <-
   final_sleep_data$BMI.Category %>%
-  if_else(. == "Normal Weight", "Normal", .) %>%
   factor(levels = c("Normal", "Normal Weight","Overweight", "Obese"))
-unique(final_sleep_data$BMI.Category)
 ```
 
-# Finales Datenset
+Am Ende werfen wir noch einen kurzen Blick ins finale Datenset.
 
 ```{r}
-summary(final_sleep_data)
+knitr::kable(head(final_sleep_data), caption = "Das Finale Datenset")
 ```
+
+Nach dem wir das Datensetz fertig aufbereiten haben, widmen wir uns um unserer ersten These.
 
 # Wie wirkt sich Körperliche Aktivität und Stress auf die Schlaf Qualität aus?
 
@@ -155,7 +153,6 @@ percent_sleep_data <- final_sleep_data %>%
     values_to = "Value"
   )
 ```
-
 
 ```{r message=FALSE, warning=FALSE}
 ggplot(
@@ -175,10 +172,3 @@ ggplot(
   geom_smooth() +
   geom_point()
 ```
-
-
-
-
-
-
-
