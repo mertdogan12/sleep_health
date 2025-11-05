@@ -129,6 +129,19 @@ final_sleep_data$BMI.Category <-
   factor(levels = c("Normal", "Normal Weight","Overweight", "Obese"))
 ```
 
+Die Variabeln *Stress.Level*, *Physical.Activity.Level* und *Daily.Steps* werden in realtive Prozentwerte umgewandelt. Dabei entspricht 0 % dem minmalen Wert im Datensatz ist und 100 Prozent der maximalen Wert im Datensatz. Diese Prozentwerte fügen wir dem Datensatz hinzu um, die Variablen besser miteinander vergleichbarer zu machen.
+
+```{r, message=FALSE}
+final_sleep_data <- 
+  final_sleep_data %>%
+  mutate(
+    Stress.Level.Percent = 100 * (Stress.Level - min(Stress.Level)) / (max(Stress.Level) - min(Stress.Level)),
+    Physical.Activity.Level.Percent = 100 * (Physical.Activity.Level - min(Physical.Activity.Level)) / (max(Physical.Activity.Level) - min(Physical.Activity.Level)),
+    Daily.Steps.Percent = 100 * (Daily.Steps - min(Daily.Steps)) / (max(Daily.Steps) - min(Daily.Steps))
+  ) 
+```
+
+
 Am Ende werfen wir noch einen kurzen Blick ins finale Datenset.
 
 ```{r, message=FALSE}
@@ -139,36 +152,48 @@ Nach dem wir das Datensetz fertig aufbereiten haben, widmen wir uns um unserer e
 
 # Wie wirkt sich Körperliche Aktivität und Stress auf die Schlaf Qualität aus?
 
-```{r, message=FALSE}
-percent_sleep_data <- final_sleep_data %>%
-  select(Quality.of.Sleep, Stress.Level, Physical.Activity.Level, Daily.Steps) %>%
-  mutate(
-    Stress.Level = 100 * (Stress.Level - min(Stress.Level)) / (max(Stress.Level) - min(Stress.Level)),
-    Physical.Activity.Level = 100 * (Physical.Activity.Level - min(Physical.Activity.Level)) / (max(Physical.Activity.Level) -     min(Physical.Activity.Level)),
-    Daily.Steps = 100 * (Daily.Steps - min(Daily.Steps)) / (max(Daily.Steps) - min(Daily.Steps))
-  ) %>%
+```{r message=FALSE, warning=FALSE}
+final_sleep_data %>%
+  select(Quality.of.Sleep, Physical.Activity.Level.Percent, Daily.Steps.Percent) %>%
   pivot_longer(
-    cols = c(Physical.Activity.Level, Stress.Level, Daily.Steps),
+    cols = c(Physical.Activity.Level.Percent, Daily.Steps.Percent),
     names_to = "Variable",
     values_to = "Value"
+  ) %>%
+  ggplot(
+    data = .,
+    mapping = aes(x = Value, y = Quality.of.Sleep, colour = Variable)
+  ) +
+  geom_smooth() +
+  labs(
+    title = "Körperliche Aktivität und Schlafqualität",
+    x = "Prozent", y = "Schlafqualität"
   )
 ```
 
-```{r message=FALSE, warning=FALSE}
+```{r, message=FALSE}
 ggplot(
-  data = percent_sleep_data,
-  mapping = aes(x = Quality.of.Sleep, y = Value, colour = Variable)
+  data = final_sleep_data,
+  mapping = aes(x = Stress.Level, y = Quality.of.Sleep)
 ) +
-  geom_smooth()
+  geom_smooth() +
+  labs(
+    title = "Stress und Schlafqualität",
+    x = "Stress", y = "Schlafqualität"
+  )
 ```
+
 
 # Wie verändert sich die Schlafqualität im Alter
 
 ```{r, message=FALSE, warning=FALSE}
 ggplot(
   data = final_sleep_data,
-  mapping = aes(x = Quality.of.Sleep, y = Age)
+  mapping = aes(x = Age, y = Quality.of.Sleep)
 ) + 
   geom_smooth() +
-  geom_point()
+  labs(
+    title = "Alter und Schlafqualität",
+    x = "Alter", y = "Schlafqualität"
+  )
 ```
