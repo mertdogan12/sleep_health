@@ -165,6 +165,7 @@ final_sleep_data %>%
     mapping = aes(x = Value, y = Quality.of.Sleep, colour = Variable)
   ) +
   geom_smooth() +
+  geom_jitter() +
   labs(
     title = "Körperliche Aktivität und Schlafqualität",
     x = "Prozent", y = "Schlafqualität"
