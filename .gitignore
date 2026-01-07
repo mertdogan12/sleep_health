@@ -2,3 +2,7 @@
 .Rhistory
 .RData
 .Ruserdata
+airline_stats.csv
+dfw_airline.csv
+lc_loans.csv
+state.csv
