@@ -16,6 +16,7 @@ library(tidyverse)
 library(tidymodels)
 library(explore)
 library(ranger)
+library(corrplot)
 ```
 
 # Aufgabenstellung
@@ -126,7 +127,10 @@ Es gibt 4 Kategorien. Sortiert ergibt das also: *"Normal" \< "Normal Weight" \< 
 ```{r, message=FALSE}
 final_sleep_data$BMI.Category <-
   final_sleep_data$BMI.Category %>%
-  factor(levels = c("Normal", "Normal Weight","Overweight", "Obese"))
+  factor(
+    levels = c("Normal", "Normal Weight","Overweight", "Obese"),
+    ordered = TRUE
+    )
 ```
 
 Die Variabeln *Stress.Level*, *Physical.Activity.Level* und *Daily.Steps* werden in realtive Prozentwerte umgewandelt. Dabei entspricht 0 % dem minmalen Wert im Datensatz ist und 100 Prozent der maximalen Wert im Datensatz. Diese Prozentwerte fügen wir dem Datensatz hinzu um, die Variablen besser miteinander vergleichbarer zu machen.
@@ -146,44 +150,123 @@ Am Ende werfen wir noch einen kurzen Blick ins finale Datenset.
 
 ```{r, message=FALSE}
 knitr::kable(head(final_sleep_data), caption = "Das Finale Datenset")
+glimpse(final_sleep_data)
 ```
 
 Nach dem wir das Datensetz fertig aufbereiten haben, widmen wir uns um unserer ersten These.
 
-# Wie wirkt sich Körperliche Aktivität und Stress auf die Schlaf Qualität aus?
+# Wie wirkt sich Stress und Körperliche Aktivität auf die Schlaf Qualität aus?
 
-```{r message=FALSE, warning=FALSE}
+
+
+```{r}
 final_sleep_data %>%
-  select(Quality.of.Sleep, Physical.Activity.Level.Percent, Daily.Steps.Percent) %>%
-  pivot_longer(
-    cols = c(Physical.Activity.Level.Percent, Daily.Steps.Percent),
-    names_to = "Variable",
-    values_to = "Value"
-  ) %>%
-  ggplot(
-    data = .,
-    mapping = aes(x = Value, y = Quality.of.Sleep, colour = Variable)
-  ) +
-  geom_smooth() +
-  geom_jitter() +
-  labs(
-    title = "Körperliche Aktivität und Schlafqualität",
-    x = "Prozent", y = "Schlafqualität"
-  )
+  select(Quality.of.Sleep, Physical.Activity.Level, Daily.Steps, Stress.Level) %>%
+  cor() %>%
+  corrplot(method = 'ellipse')
 ```
 
-```{r, message=FALSE}
+- Stress und Herzfreq. hohe Korrelation mit Schlaf
+- Sport leichte Korrelation mit Stress
+- und sehr leiche Korrelation mit Schlaf
+
+Schauen wir uns erstmal an wie sich Stress auf die Schlafqualität auswirkt. Dabei wird die Variable *Stress.Level* mit der Variable *Quality.of.Sleep* dem Diaram verglichen.
+
+```{r}
 ggplot(
   data = final_sleep_data,
   mapping = aes(x = Stress.Level, y = Quality.of.Sleep)
 ) +
   geom_smooth() +
+  geom_count() +
   labs(
     title = "Stress und Schlafqualität",
-    x = "Stress", y = "Schlafqualität"
+    x = "Stress Level (1 - 10)", 
+    y = "Schlafqualität (1 - 10)"
+  )
+```
+- AUsreizer entfernen
+- Schlafqualität nimmt eindeutig mit mehr Stress ab
+
+
+```{r}
+final_sleep_data %>%
+  ggplot(mapping = aes(x = Stress.Level, fill = Sleep.Disorder == "Has sleep disorder")) +
+  geom_bar() +
+  scale_x_continuous(breaks = 1:10) +
+  labs(
+    title = "Stress und Schlafstörungen",
+    subtitle = "Anzahl der Schlafstörung relativ zu den Gesamten Personen",
+    x = "Stress Level (1 - 10)",
+    y = "Anzahl Personen",
+    fill = "Hat einen Schlafstörung?"
   )
 ```
 
+- Schl
+
+Wie man an dem Diagram erkennen kann nimmt Schlafqulität mit steigenden Stresslevel eindeutig ab.
+
+```{r message=FALSE, warning=FALSE}
+final_sleep_data %>%
+  ggplot(
+    mapping = aes(x = Physical.Activity.Level, y = Quality.of.Sleep)
+  ) +
+  geom_smooth() +
+  geom_count(mapping = aes(color = Stress.Level)) +
+  scale_x_continuous(breaks = seq(0, 100, by = 10)) +
+  labs(
+    title = "Körperliche Aktivität und Schlafqualität",
+    x = "Täglische Körperliche Aktivität in Minuten", 
+    y = "Schlafqualität (1 - 10)",
+    color = "Stress Level"
+  )
+
+
+final_sleep_data %>%
+  ggplot(
+    mapping = aes(x = Daily.Steps, y = Quality.of.Sleep)
+  ) +
+  geom_smooth() +
+  geom_count(mapping = aes(color = Stress.Level)) +
+  labs(
+    title = "Tägliche Schritte und Schlafqualität",
+    x = "Tägliche Schritte", 
+    y = "Schlafqualität (1 - 10)",
+    color = "Stress Level"
+  )
+```
+
+```{r}
+final_sleep_data %>%
+  ggplot(
+    mapping = aes(x = Physical.Activity.Level, y = Sleep.Disorder)
+  ) +
+  geom_boxplot() +
+  scale_x_continuous(breaks = seq(0, 100, by = 10)) +
+  theme(axis.title.y = element_blank()) +
+  labs(
+    title = "Schlafstörung und Köperliche Aktivität",
+    x = "Täglische Körperliche Aktivität in Minuten"
+  )
+
+final_sleep_data %>%
+  ggplot(
+    mapping = aes(x = Daily.Steps, y = Sleep.Disorder)
+  ) +
+  geom_boxplot() +
+  theme(axis.title.y = element_blank()) +
+  labs(
+    title = "Schlafstörung und Täglische Schritte",
+    x = "Tägliche Schritte"
+  )
+```
+
+
+- Wenig Stress wieder eindeutig gute schlafqualität
+- 0 schritte geht nicht
+- Viele Körperliche Aktivität/Viele Schritte --> Stress --> Schlecher schlaf
+- Gewisses maß an Sport --> weniger Stress + bessere Schlafqualität
 
 # Wie verändert sich die Schlafqualität im Alter
 
@@ -193,8 +276,13 @@ ggplot(
   mapping = aes(x = Age, y = Quality.of.Sleep)
 ) + 
   geom_smooth() +
+  geom_count() +
   labs(
     title = "Alter und Schlafqualität",
     x = "Alter", y = "Schlafqualität"
   )
 ```
+
+*Wann hat man die beste Schlafqualität*
+
+*Noch nimt Schlafstörungen*
