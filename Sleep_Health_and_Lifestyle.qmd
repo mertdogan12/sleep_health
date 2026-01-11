@@ -50,7 +50,7 @@ Der Datensatz hat **`r nrow(sleep_data)`** Zeilen und **`r ncol(sleep_data)`** S
 Die Variablen haben folgende Bedeutung:
 
 | Variable | Type | Bedeutung |
-|----|----|----|
+|------------------------|------------------------|------------------------|
 | Person.ID | int | Kennung für jede Person |
 | Gender | chr | Geschlecht ("Male"/"Female") |
 | Age | int | Alter |
@@ -145,7 +145,6 @@ final_sleep_data <-
   ) 
 ```
 
-
 Am Ende werfen wir noch einen kurzen Blick ins finale Datenset.
 
 ```{r, message=FALSE}
@@ -177,13 +176,13 @@ ggplot(
   )
 ```
 
-Die Grafik zeigt, dass die Schlafqulität mit zunehmeden Stress abnimmt.
+Die Grafik zeigt, dass die Schlafqualität mit zunehmenden Stress abnimmt.
 
-Die Schlafqualität bleibt in einem Bereich von 4 bis 9. Wobei der Durschnitt **`r mean(final_sleep_data$Quality.of.Sleep)`** beträgt. 
+Die Schlafqualität bleibt in einem Bereich von 4 bis 9. Wobei der Durschnitt **`r mean(final_sleep_data$Quality.of.Sleep)`** beträgt.
 
-Bis zu einem Stresslevel von 6 bleibt die Schlafqulität also über dem Durschnitt. Somit also relativ zum Datensatz gesehen im höheren Bereich. Ab einen Stresslevel von 6 fällt die Schlafqulität darunter.
+Bis zu einem Stresslevel von 6 bleibt die Schlafqulität somit über dem Durschnittund befindet sich relativ zum Datensatz im höheren Bereich. Ab einen Stresslevel von 6 fällt die Schlafqulität hingegen unter den Durchschnitt.
 
-Dazu muss man aber sagen, dass die Daten subjektiv sind. Um eine genauers Bild zu bekommen schaun wird uns an wie sich Stress auf die Schlafstörungen auswirk. Dazu betrachen wir, wie groß der Teil an Personen sind, die an Schlafstörungen leiden.
+Dabei ist zu beachten, dass es sich um subjektive Daten handelt. Um eine genauers Bild zu erhalten, betrachten wir im Folgenden, wie sich Stress auf die Schlafstörungen auswirkt. Dazu betrachen wir, wie groß der Anteil der Personen ist, die an Schlafstörungen leiden.
 
 ```{r}
 stress_sleep_dis <- final_sleep_data %>%
@@ -205,9 +204,11 @@ stress_sleep_dis %>%
   )
 ```
 
-Wie wird sehen können leigt der Schlafstörungsanteil bei Stresslevel 1 bis 6 unter 50 Prozent. Man kann sogar einen Abfall der Schlafstörungen, bis zu einem Stresslevel von 6 erkennen . Nach einem Stresslevel von 6 hat man aber einen starken Anstiegt von Schlafstörungen. Somit kann man sagen, dass trotz dem Abfall am Anfgang, Stress die Schlafsörungen deutlich erhöht. Somit bestäigen wir unsere vorherigen Ergebnisse.
+Wie zu erkenne ist, liegt der Anteil der Schlafstörungen bei einem Stresslevel von 1 bis 6 unter 50 Prozent. Man kann sogar einen Abfall der Schlafstörungen, bis zu einem Stresslevel von 6 erkennen. Ab dem Stresslevel von 6 steigt der Anteil der Schlafstörungen jedoch deutlich an.
 
-Nun schauen wir uns an wie sich Körperliche Aktivität auf die Schlafqulität auswirkt.
+Trotz des anfänglischen Rückangs kann man sagen, dass ein höheres Stresslevel mit einem erhöhten Auftreten von Schlafstörungen einhergeht. Damit bestätigen sich die vorherigen Ergebnisse.
+
+Schauen wir uns als nächstes an wie sich Körperliche Aktivität auf die Schlafqulität auswirkt.
 
 ```{r, message=FALSE}
 final_sleep_data %>%
@@ -225,11 +226,11 @@ final_sleep_data %>%
   )
 ```
 
-Wie man sehen kann wirkt sich die Körperliche Aktivität nicht so eindeutig auf die Schlafqualität aus. Man kann aber einen leichten anstiegt erkenne. Es lassen sich zudem, zwei größere Außreizer erkenn. Einen bei einer guten Schlafqulität trotz Körperlicher AKtivität und eien bei schlechter Schlafqulität trotz hoher Körperlicher Aktivität. Diese habe aber ein hohes und niedriges Stresslevel. Die Schlafqulität ist also stark von Stresslevel beeinflusst.
+Es zeigt sich kein eindeutiger Zusammenhang zwischen körperlicher Aktivität und Schlafqualität. Es lässt sich jedoch leichten anstiegt erkennen. Zudem sind zwei größere Außreißer scihbar. Einen bei einer guten Schlafqulität trotz Körperlicher Aktivität und einer bei schlechter Schlafqulität trotz hoher Körperlicher Aktivität. Diese habe jedoch ein hohes und niedriges Stresslevel. Die Schlafqualität ist also stark von Stresslevel beeflusst.
 
-Insgesamt deutet die Analyse darauf hin, dass Stress einen stärkeren Einfluss auf die Schlafqulität hat als die körperliche Aktivität.
+**Insgesamt deutet die Analyse darauf hin, dass Stress einen stärkeren Einfluss auf die Schlafqulität hat als die körperliche Aktivität.**
 
-Um ein noch genaueres Bild zu erhalten schauen wird uns die verteilung der Schlafstörungen auf die Körperliche Aktivität an.
+Um ein noch genaueres Bild zu erhalten, betrachen wim im Folgenden die Verteilung der Schlafstörungen auf die Körperliche Aktivität an.
 
 ```{r}
 final_sleep_data %>%
@@ -247,7 +248,7 @@ final_sleep_data %>%
 
 Man kann zu beiden Graphen sagen, dass sie eine große Spannweite haben. Somit gibt es keine klare Trennung zwichen den beiden Gruppen.
 
-Bei Personen ohne Schlafstörung liegt der Median der täglichen körperlichen Aktivität höher als bei Peronsonen mit Schlafstörungen, was darauf hindeutet, dass erstere mehr körperliche Aktivität ausüben. Gleichzeitig ist das untere Quartil bei Personen mit Schlafstörungen höher als bei Personen ohne. 
+Bei Personen ohne Schlafstörung liegt der Median der täglichen körperlichen Aktivität höher als bei Peronsonen mit Schlafstörungen, was darauf hindeutet, dass erstere mehr körperliche Aktivität ausüben. Gleichzeitig ist das untere Quartil bei Personen mit Schlafstörungen höher als bei Personen ohne.
 
 Das bedeute, dass die am wenigster aktiven Personen dennoch ein höhes Körperliche Aktivität aufweisen als weniger aktiven Personen ohne Schlafstörung.
 
@@ -272,7 +273,7 @@ final_sleep_data %>%
 
 Auch die Strittzahl zeigt keinen eindeutigen Zusammenhang zur Schlafqualität. Der Stärkere Auslößer scheint auch hier das Stresslevel zu sein.
 
-Zudem vergleichen wir auch ob die Anzahl der Täglischen Schritte einen Zusammenhang mit Schlafstörungen hat.
+Zusätzlich vergleichen wir, ob die Anzahl der Täglischen Schritte einen Zusammenhang mit Schlafstörungen hat.
 
 ```{r}
 final_sleep_data %>%
@@ -287,24 +288,19 @@ final_sleep_data %>%
   )
 ```
 
-Ähnliche wie im Diagram *Schlafstörungen und Körperliche Aktivität* haben die Personen ohne Schlafstörung eine hohen Spannweite und einen höheren Median als Personen ohne Schlafstörung.
+Ähnlich wie im Diagramm *Schlafstörungen und körperliche Aktivität* weisen Personen ohne Schlafstörung eine größere Spannweite sowie ein höheren Median als Personen mit Schlafstörungen auf. Personen mit Schlafstörungen zeigen hingegen eine geringer Spannweite. Der Median liegt zwar niedriger, jedoch ist das untere Quartil höher als bei Personen ohne Schlafstörung.
 
-Dagegen haben die Personen mit einer Schlafstörungen einen niedrige Spannweite Der Median ist zwar niedriger, dafür ist das unter Quatil höher.
+Insgesamt ähnelt sich dieses Diagramm stark dem Diagramm *Schlafstörungen und körperliche Aktivität*. Lediglich der obere Quartil der Personen mit Schlafstörung fällt im Vergleich etwas niedriger aus. Trotz dieser Unterschiede lässt sich keine eindeutiger Zusammenhang zwischen der täglischen Strittzahl und dem Auftreten von Schlafsörungen erkennen.
 
-Somit ähnelt sich das Diagram Stark mit dem Diagram *Schlafstörungen und Körperliche Aktivität*. Nur das obere Quartil der Personen mit einer Schlaftörung fältt relativ zum vorherigen Diagram niedriger aus. Trotzdem kann man sagen, dass Täglische Schritte keine eindeutigen zusammenhand zu den vorkommen von Schlafstörungen hat.
+Aus den Diagrammen ergibt sich also:
 
-```{r}
-final_sleep_data %>%
-  select(Quality.of.Sleep, Physical.Activity.Level, Daily.Steps, Stress.Level) %>%
-  cor() %>%
-  corrplot(method = 'ellipse')
-```
+**Körperliche Aktivität scheint die Schlafqulität nicht zu beeinflussen**
 
-- Stress und Herzfreq. hohe Korrelation mit Schlaf
-- Sport leichte Korrelation mit Stress
-- und sehr leiche Korrelation mit Schlaf
+Somit lässt sich die These nur zum Teil bestätigen. Wenig Stress hat einen großen Einfluss auf die Schlafqualität. Dagegen hat die Köperliche Aktivität keinen oder nur einen kleinen Einfluss auf die Schlafqualität.
 
-# Wie verändert sich die Schlafqualität im Alter
+**Möglichkeites besser moruk**
+
+### Untersuchung der zweiten These
 
 ```{r, message=FALSE, warning=FALSE}
 ggplot(
@@ -317,8 +313,23 @@ ggplot(
     title = "Alter und Schlafqualität",
     x = "Alter", y = "Schlafqualität"
   )
+
+cor(final_sleep_data$Quality.of.Sleep, final_sleep_data$Age)
 ```
 
 *Wann hat man die beste Schlafqualität*
 
-*Noch nimt Schlafstörungen*
+```{r}
+ggplot(
+  data = final_sleep_data,
+  mapping = aes(x = Age, y = Sleep.Disorder)
+) +
+  geom_boxplot()
+
+ggplot(
+  data = final_sleep_data,
+  mapping = aes(x = Age, fill = Sleep.Disorder == "Has sleep disorder")
+) +
+  geom_bar()
+```
+
