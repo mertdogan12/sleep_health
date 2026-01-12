@@ -302,7 +302,7 @@ Somit lässt sich die These nur zum Teil bestätigen. Wenig Stress hat einen gro
 
 ### Untersuchung der zweiten These
 
-Zunächst schauen wir uns Alter und Schlaqualität an.
+Zunächst werfen wir einen Blick auf den Zusammenhang zwischen Alter und der Schlafqulität.
 
 ```{r, message=FALSE, warning=FALSE}
 ggplot(
@@ -317,11 +317,11 @@ ggplot(
   )
 ```
 
-Man kann einen anstiegt der Schlafqualität mit voranschreiten des Alters erkennen. Die Steigung ist nicht linear. Im Alter von 37 bis 47 gitb es einen Rückgang. 
+In der Grafik ist erkannbar, dass die Schlafqualität mit zunehmendem Alter ansteigt. Er steigt aber nicht linear. Im Bereicht vom Alter 37 bis zum Alter 47 gibt es einen Rückgang der Schlafqualität.
 
-Somit gibt es eine leicht positve Korrelation von **`r cor(final_sleep_data$Quality.of.Sleep, final_sleep_data$Age)`**.
+Somit ergibt sich leicht positve Korrelation von **`r cor(final_sleep_data$Quality.of.Sleep, final_sleep_data$Age)`**.
 
-Schauen wird uns zudem noch an wie sich das alter auf die Schlafstörungen auswirkt.
+Schauen wird uns ergänzent zu dem noch an, wie sich das Alter auf die Schlafstörungen auswirkt.
 
 ```{r}
 ggplot(
@@ -331,10 +331,10 @@ ggplot(
   geom_boxplot()
 ```
 
-Der Graph zeigt, dass Schlafstörungen heufiger im hohen Alter auftreten. Dies zeigt ein anderes Bild als der vorherige Graph. Dort ist die Schlaftqulität im Alter angestiegen. 
+Der Graph zeigt, dass Schlafstörungen häufiger im hohen Alter auftreten. Dieses Ergebnis steht im Kontrast zum vorherigen Graphen, der einen Anstieg der Schlafqualität mit zunehmendem Alter zeigt.
 
-Dazu muss man aber sagen, dass es nur eine leichte positive Correlation war. Zudem ist die Schlafqulität eine subjektive Variable. Auch steigt sie nicht linear sonder hat zwichen durch einen Abfall.
+Dabei ist jedoch zu berücksichtigen, dass es sich hirbei um eine Schwach positive Korrelation handelt. Zudem ist die Schlafqualität eine subjektive Variable. Darüber hinaus verläuft die Entwicklung nicht linear, sonder sinkt zwichendurch.
 
-Allem im alles kann man also sagen, dass der zweige Graph eindeutigere Ergebnisse liefert. Somit wiederlegt sich die These. Schlafqulität scheint im Alter schlechter zu werden. Jedoch kann man nicht sagen, dass dies ein eindeutiges Ergebniss ist.
+Allem im alles kann man also sagen, dass der zweige Graph eindeutigere Ergebnisse liefert. Somit wiederlegt sich die am anfang Aufgestellet These. Schlafqulität scheint im Alter schlechter zu werden. Jedoch kann man nicht sagen, dass dies ein eindeutiges Ergebniss ist, da sich die Graphen teilweise wiedersprechen.
 
 Um ein genauere Ergebniss zu bekommen müsste man sich noch weiter Daten anschauen. Insbesondere die Daten die im hohen Alter eine gute Schlafqulität aussagen, da dies wiedersprüchen zum zweiten Graphen sind. Man könne also versuchen sich die wiedersprüchleichen Daten durch andere Faktoren zu deuten.
