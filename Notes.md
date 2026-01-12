@@ -14,3 +14,28 @@
 -   Person.ID, Occupation entfernen
 -   Sleep Disorder zu true and false
 -   Geschecht und BMI Categorie zu numerischen Werten
+-   Correlation usw. Berechnen
+
+## Schlaf und Körtper
+
+``` r
+final_sleep_data %>%
+  select(Quality.of.Sleep, Physical.Activity.Level.Percent, Daily.Steps.Percent, Stress.Level) %>%
+  pivot_longer(
+    cols = c(Physical.Activity.Level.Percent, Daily.Steps.Percent),
+    names_to = "Variable",
+    values_to = "Value"
+  ) %>%
+  ggplot(
+    mapping = aes(x = Value, y = Quality.of.Sleep, shape = Variable)
+  ) +
+  geom_smooth() +
+  geom_count(mapping = aes(color = Stress.Level)) +
+  labs(
+    title = "Körperliche Aktivität und Schlafqualität",
+    x = "Relative Aktivität in Prozent", 
+    y = "Schlafqualität",
+    color = "Stress Level",
+    shape = "Aktivitäts Type"
+  )
+```
