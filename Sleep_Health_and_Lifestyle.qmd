@@ -77,7 +77,7 @@ sleep_data %>% describe()
 sleep_data %>% describe_tbl()
 ```
 
-*Person.ID* nummeriert lediglich die verschiedenen Personen durch und ist deshalb für uns nicht relevant. Auch die Variable *Occupation* liefert uns keine relevanten Informationen. Vor allem, da wir bereits die *Stress.Level* Variable haben. Aus diesem Grund werden wir *Person.ID* und *Occupation* später aus dem Datensatz entfernen.
+*Person.ID* nummeriert lediglich die verschiedenen Personen durch und ist deshalb für uns nicht relevant. Auch die Variable *Occupation* liefert uns keine relevanten Informationen. Aus diesem Grund werden wir *Person.ID* und *Occupation* später aus dem Datensatz entfernen.
 
 Ansonsten scheint der Rest der Daten relevant und korrekt zu sein.
 
@@ -110,7 +110,7 @@ Um die Lesbarkeit zu verbesser wandel wir die *Sleep.Discorder* Variable, zu zwe
 
 ```{r, message=FALSE}
 final_sleep_data$Sleep.Disorder <-
-  if_else(final_sleep_data$Sleep.Disorder, "Has sleep disorder", "Has no sleep disorder") %>%
+  if_else(final_sleep_data$Sleep.Disorder, "Hat Schlafstörung", "Hat keine Schlafstörung") %>%
   as_factor()
 ```
 
@@ -133,17 +133,18 @@ final_sleep_data$BMI.Category <-
     )
 ```
 
-Die Variabeln *Stress.Level*, *Physical.Activity.Level* und *Daily.Steps* werden in realtive Prozentwerte umgewandelt. Dabei entspricht 0 % dem minmalen Wert im Datensatz ist und 100 Prozent der maximalen Wert im Datensatz. Diese Prozentwerte fügen wir dem Datensatz hinzu um, die Variablen besser miteinander vergleichbarer zu machen.
+Die Variable *Blood.Pressure* ist als String im Datenset. Wir teilen die Variable in den Systolisch und Diastolischen Wert auf und Wandeln ihn in eine Integer um.
 
-```{r, message=FALSE}
-final_sleep_data <- 
+```{r}
+final_sleep_data <-
   final_sleep_data %>%
-  mutate(
-    Stress.Level.Percent = 100 * (Stress.Level - min(Stress.Level)) / (max(Stress.Level) - min(Stress.Level)),
-    Physical.Activity.Level.Percent = 100 * (Physical.Activity.Level - min(Physical.Activity.Level)) / (max(Physical.Activity.Level) - min(Physical.Activity.Level)),
-    Daily.Steps.Percent = 100 * (Daily.Steps - min(Daily.Steps)) / (max(Daily.Steps) - min(Daily.Steps))
-  ) 
+  separate_wider_delim(
+    Blood.Pressure,
+    delim = "/",
+    names = c("BD.Systolisch", "BD.Diastolisch")
+  )
 ```
+
 
 Am Ende werfen wir noch einen kurzen Blick ins finale Datenset.
 
@@ -155,6 +156,23 @@ glimpse(final_sleep_data)
 Nach dem wir das Datensetz fertig aufbereiten haben, widmen wir uns um unserer ersten These.
 
 # Modell bilden
+
+## Testdaten Beiseite legen
+
+Damit sich keine Data-Snooping-Bias entwickelt legen wir bereite am Anfang einen Teil der Daten Beiseite. Diese werden wir dann am Ende dazu verwenden, um das Modell auf noch nicht gelesende Daten zu teste.
+
+```{r}
+set.seed(1337)
+sleep_data_split <- initial_split(final_sleep_data, prop = 0.80, Quality.of.Sleep)
+sleep_data_split
+```
+
+```{r}
+final_sleep_data_train <- training(sleep_data_split)
+final_sleep_data_test <- testing(sleep_data_split)
+final_sleep_data <- final_sleep_data_train
+```
+
 
 ## Explorative Datenanalyse
 
@@ -188,7 +206,7 @@ Dabei ist zu beachten, dass es sich um subjektive Daten handelt. Um eine genauer
 stress_sleep_dis <- final_sleep_data %>%
   group_by(Stress.Level) %>%
   summarise(
-    percent_sleep_disorder = sum(Sleep.Disorder == "Has sleep disorder") / (sum(Sleep.Disorder == "Has no sleep disorder") + sum(Sleep.Disorder == "Has sleep disorder"))
+    percent_sleep_disorder = sum(Sleep.Disorder == "Hat Schlafstörung") / (sum(Sleep.Disorder == "Hat keine Schlafstörung") + sum(Sleep.Disorder == "Hat Schlafstörung"))
   )
 
 stress_sleep_dis %>%
@@ -338,3 +356,104 @@ Dabei ist jedoch zu berücksichtigen, dass es sich hirbei um eine Schwach positi
 Allem im alles kann man also sagen, dass der zweige Graph eindeutigere Ergebnisse liefert. Somit wiederlegt sich die am anfang Aufgestellet These. Schlafqulität scheint im Alter schlechter zu werden. Jedoch kann man nicht sagen, dass dies ein eindeutiges Ergebniss ist, da sich die Graphen teilweise wiedersprechen.
 
 Um ein genauere Ergebniss zu bekommen müsste man sich noch weiter Daten anschauen. Insbesondere die Daten die im hohen Alter eine gute Schlafqulität aussagen, da dies wiedersprüchen zum zweiten Graphen sind. Man könne also versuchen sich die wiedersprüchleichen Daten durch andere Faktoren zu deuten.
+
+## Modellen
+
+### Lineare Regression
+
+```{r}
+rec <- recipe(Quality.of.Sleep ~ ., data = final_sleep_data_train) |>
+  step_impute_median(all_numeric_predictors()) |>
+  step_dummy(all_nominal_predictors()) |>
+  step_normalize(all_predictors()) 
+
+prep_rec <- prep(rec)
+
+train_ready <- bake(prep_rec, new_data = NULL)
+
+train_ready
+```
+
+
+```{r}
+lm_model <- linear_reg() |> set_engine("lm")
+
+lm_fit <- lm_model |> fit(Quality.of.Sleep ~ ., data = train_ready)
+
+lm_fit |> extract_fit_engine() |> summary()
+```
+
+```{r}
+pred_reg <- predict(lm_fit, new_data = train_ready)
+
+compare <- train_ready |> 
+  select(Quality.of.Sleep) |> 
+  bind_cols(pred_reg)
+
+head(compare)
+```
+
+```{r}
+rmse(compare, Quality.of.Sleep, .pred)
+```
+
+### Entscheindungsbaum
+
+```{r}
+tree_mod <- decision_tree(mode = "regression") 
+
+tree_fit <- 
+  tree_mod |> 
+  fit(Quality.of.Sleep ~ ., data = train_ready)
+```
+
+```{r}
+pred_tree <- predict(tree_fit, new_data = train_ready)
+
+compare <- train_ready |> 
+  select(Quality.of.Sleep) |> 
+  bind_cols(pred_tree)
+head(compare)
+```
+
+```{r}
+rmse(compare, Quality.of.Sleep, .pred)
+```
+
+### Random Forest
+
+```{r}
+forest_mod <- rand_forest(trees = 100)  |>  
+    set_mode("regression") 
+
+forest_fit <- forest_mod |> 
+  fit(Quality.of.Sleep ~ ., data = train_ready)
+
+pred_tree3 <- predict(forest_fit, new_data = train_ready)
+
+compare3 <- train_ready |> 
+  select(Quality.of.Sleep) |> 
+  bind_cols(pred_tree3)
+head(compare3)
+```
+
+```{r}
+rmse(compare3, Quality.of.Sleep, .pred)
+```
+
+## Modell beurteilen
+
+```{r}
+test_ready <- bake(prep_rec, new_data = final_sleep_data_test)
+```
+
+```{r}
+pred_test <- predict(forest_fit, new_data = test_ready)
+
+compare_test <- test_ready |> 
+  select(Quality.of.Sleep) |> 
+  bind_cols(pred_test)
+head(compare_test)
+```
+
+# Evaluieren
