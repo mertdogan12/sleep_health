@@ -468,7 +468,7 @@ Auch hier führen wir eine Kreuzvalidierung durch.
 ```{r}
 cv_splits <- vfold_cv(train_ready, v = 10, strata = Quality.of.Sleep)
 
-model_spec <- decision_tree () %>%
+model_spec <- decision_tree() %>%
   set_mode("regression")
 
 workflow_spec <- workflow() %>%
@@ -523,7 +523,7 @@ Führen wir auch hier eine Kreuzvalidierung aus.
 ```{r}
 cv_splits <- vfold_cv(train_ready, v = 10, strata = Quality.of.Sleep)
 
-model_spec <- rand_forest (trees = 100) %>%
+model_spec <- rand_forest(trees = 100) %>%
   set_mode("regression")
 
 workflow_spec <- workflow() %>%
@@ -542,6 +542,40 @@ Der RMSE wert ist nur leicht höher als der vorherige und fällt im Gegensatz zu
 
 ### Modelle optimieren
 
+```{r}
+forest_mod <- rand_forest(mtry = tune(), min_n = tune(), trees = 100)  %>%  
+    set_mode("regression") 
+
+forest_wflow <- workflow() %>%
+  add_model(forest_mod) %>%
+  add_formula(Quality.of.Sleep ~ .)
+  
+forest_param <- forest_wflow %>% 
+  extract_parameter_set_dials() %>%
+  update(
+    mtry = mtry(c(1, 10))
+  )
+
+forest_folds <- vfold_cv(train_ready)
+
+forest_tune <- forest_wflow %>%
+  tune_grid(
+    forest_folds,
+    grid = forest_param %>% grid_regular(levels = 3)
+  )
+
+select_best(forest_tune, metric = "rmse")
+```
+
+```{r}
+final_forest_mod <- rand_forest(mtry = 10, min_n = 2, trees = 100)  %>%  
+    set_mode("regression") 
+
+final_forest_fit <- final_forest_mod %>% 
+  fit(Quality.of.Sleep ~ ., data = train_ready)
+```
+
+
 ## Modell beurteilen
 
 ```{r}
@@ -549,7 +583,7 @@ test_ready <- bake(prep_rec, new_data = final_sleep_data_test)
 ```
 
 ```{r}
-pred_test <- predict(forest_fit, new_data = test_ready)
+pred_test <- predict(final_forest_fit, new_data = test_ready)
 
 compare_test <- test_ready |> 
   select(Quality.of.Sleep) |> 
