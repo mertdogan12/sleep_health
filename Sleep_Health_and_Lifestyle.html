@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Mert Baki Dogan">
-<meta name="dcterms.date" content="2026-01-14">
+<meta name="dcterms.date" content="2026-01-19">
 
 <title>Sleep Health and Lifestyle</title>
 <style>
@@ -2219,11 +2219,13 @@ vertical-align: -.125em;
   <li><a href="#untersuchung-der-ersten-these" id="toc-untersuchung-der-ersten-these" class="nav-link" data-scroll-target="#untersuchung-der-ersten-these">Untersuchung der ersten These</a></li>
   <li><a href="#untersuchung-der-zweiten-these" id="toc-untersuchung-der-zweiten-these" class="nav-link" data-scroll-target="#untersuchung-der-zweiten-these">Untersuchung der zweiten These</a></li>
   </ul></li>
-  <li><a href="#modellen" id="toc-modellen" class="nav-link" data-scroll-target="#modellen">Modellen</a>
+  <li><a href="#daten-aufbereiten-1" id="toc-daten-aufbereiten-1" class="nav-link" data-scroll-target="#daten-aufbereiten-1">Daten aufbereiten</a></li>
+  <li><a href="#modellieren" id="toc-modellieren" class="nav-link" data-scroll-target="#modellieren">Modellieren</a>
   <ul class="collapse">
   <li><a href="#lineare-regression" id="toc-lineare-regression" class="nav-link" data-scroll-target="#lineare-regression">Lineare Regression</a></li>
   <li><a href="#entscheindungsbaum" id="toc-entscheindungsbaum" class="nav-link" data-scroll-target="#entscheindungsbaum">Entscheindungsbaum</a></li>
   <li><a href="#random-forest" id="toc-random-forest" class="nav-link" data-scroll-target="#random-forest">Random Forest</a></li>
+  <li><a href="#modelle-optimieren" id="toc-modelle-optimieren" class="nav-link" data-scroll-target="#modelle-optimieren">Modelle optimieren</a></li>
   </ul></li>
   <li><a href="#modell-beurteilen" id="toc-modell-beurteilen" class="nav-link" data-scroll-target="#modell-beurteilen">Modell beurteilen</a></li>
   </ul></li>
@@ -2252,7 +2254,7 @@ vertical-align: -.125em;
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">January 14, 2026</p>
+      <p class="date">January 19, 2026</p>
     </div>
   </div>
   
@@ -3068,10 +3070,9 @@ $ Sleep.Disorder          &lt;fct&gt; Hat keine Schlafstörung, Hat keine Schlaf
 <p>Um ein genauere Ergebniss zu bekommen müsste man sich noch weiter Daten anschauen. Insbesondere die Daten die im hohen Alter eine gute Schlafqulität aussagen, da dies wiedersprüchen zum zweiten Graphen sind. Man könne also versuchen sich die wiedersprüchleichen Daten durch andere Faktoren zu deuten.</p>
 </section>
 </section>
-<section id="modellen" class="level2">
-<h2 class="anchored" data-anchor-id="modellen">Modellen</h2>
-<section id="lineare-regression" class="level3">
-<h3 class="anchored" data-anchor-id="lineare-regression">Lineare Regression</h3>
+<section id="daten-aufbereiten-1" class="level2">
+<h2 class="anchored" data-anchor-id="daten-aufbereiten-1">Daten aufbereiten</h2>
+<p>Bereit wir die Daten final auf um ein Trainier bereiten Datensatz zu erhalten.</p>
 <div class="cell">
 <details class="code-fold">
 <summary>Code anzeigen</summary>
@@ -3109,14 +3110,24 @@ $ Sleep.Disorder          &lt;fct&gt; Hat keine Schlafstörung, Hat keine Schlaf
 #   BD.Systolisch_X125 &lt;dbl&gt;, BD.Systolisch_X126 &lt;dbl&gt;, …</code></pre>
 </div>
 </div>
+</section>
+<section id="modellieren" class="level2">
+<h2 class="anchored" data-anchor-id="modellieren">Modellieren</h2>
+<section id="lineare-regression" class="level3">
+<h3 class="anchored" data-anchor-id="lineare-regression">Lineare Regression</h3>
+<p>Trainieren wir zuerst ein <strong>lineares Regressionsmodell</strong></p>
 <div class="cell">
 <details class="code-fold">
 <summary>Code anzeigen</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>lm_model <span class="ot">&lt;-</span> <span class="fu">linear_reg</span>() <span class="sc">|&gt;</span> <span class="fu">set_engine</span>(<span class="st">&quot;lm&quot;</span>)</span>
-<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>lm_fit <span class="ot">&lt;-</span> lm_model <span class="sc">|&gt;</span> <span class="fu">fit</span>(Quality.of.Sleep <span class="sc">~</span> ., <span class="at">data =</span> train_ready)</span>
-<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a>lm_fit <span class="sc">|&gt;</span> <span class="fu">extract_fit_engine</span>() <span class="sc">|&gt;</span> <span class="fu">summary</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>lm_model <span class="ot">&lt;-</span> <span class="fu">linear_reg</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_engine</span>(<span class="st">&quot;lm&quot;</span>)</span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>lm_fit <span class="ot">&lt;-</span> lm_model <span class="sc">%&gt;%</span> </span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fit</span>(Quality.of.Sleep <span class="sc">~</span> ., <span class="at">data =</span> train_ready)</span>
+<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a>lm_fit <span class="sc">%&gt;%</span> </span>
+<span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">extract_fit_engine</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb35-9"><a href="#cb35-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summary</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>
@@ -3182,23 +3193,17 @@ Multiple R-squared:  0.9817,    Adjusted R-squared:  0.9793
 F-statistic: 412.2 on 34 and 262 DF,  p-value: &lt; 2.2e-16</code></pre>
 </div>
 </div>
+<p>Schauen wir uns die Fehler der Vorhersage auf dem Gesamten Trainigsdatensatz an.</p>
 <div class="cell">
 <details class="code-fold">
 <summary>Code anzeigen</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>pred_reg <span class="ot">&lt;-</span> <span class="fu">predict</span>(lm_fit, <span class="at">new_data =</span> train_ready)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</details>
-<div class="cell-output cell-output-stderr">
-<pre><code>Warning in predict.lm(object = object$fit, newdata = new_data, type =
-&quot;response&quot;, : prediction from rank-deficient fit; consider predict(.,
-rankdeficient=&quot;NA&quot;)</code></pre>
-</div>
-<details class="code-fold">
-<summary>Code anzeigen</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>compare <span class="ot">&lt;-</span> train_ready <span class="sc">|&gt;</span> </span>
-<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(Quality.of.Sleep) <span class="sc">|&gt;</span> </span>
-<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_cols</span>(pred_reg)</span>
-<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(compare)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>pred_lm <span class="ot">&lt;-</span> <span class="fu">predict</span>(lm_fit, <span class="at">new_data =</span> train_ready)</span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>compare_lm <span class="ot">&lt;-</span> train_ready <span class="sc">%&gt;%</span> </span>
+<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(Quality.of.Sleep) <span class="sc">%&gt;%</span> </span>
+<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_cols</span>(pred_lm)</span>
+<span id="cb37-6"><a href="#cb37-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-7"><a href="#cb37-7" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(compare_lm)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 6 × 2
@@ -3212,10 +3217,11 @@ rankdeficient=&quot;NA&quot;)</code></pre>
 6                4  4.36</code></pre>
 </div>
 </div>
+<p>Nun berechnen wird den RSME Wert.</p>
 <div class="cell">
 <details class="code-fold">
 <summary>Code anzeigen</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="fu">rmse</span>(compare, Quality.of.Sleep, .pred)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="fu">rmse</span>(compare_lm, Quality.of.Sleep, .pred)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 1 × 3
@@ -3224,28 +3230,61 @@ rankdeficient=&quot;NA&quot;)</code></pre>
 1 rmse    standard       0.161</code></pre>
 </div>
 </div>
+<p>Dieser liegt in einem guten Bereich. Somit scheinen die Vorhersagen vom Eigentlichen Wert nicht stark abzuweichen.</p>
+<p>Da der RSME Wert so niedrig ist führen wir zudem noch eine Kreuzvalidierung durch um zu überprüfen ob Overfitting vorhanden ist.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code anzeigen</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>cv_splits <span class="ot">&lt;-</span> <span class="fu">vfold_cv</span>(train_ready, <span class="at">v =</span> <span class="dv">10</span>, <span class="at">strata =</span> Quality.of.Sleep)</span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>model_spec <span class="ot">&lt;-</span> <span class="fu">linear_reg</span> () <span class="sc">%&gt;%</span></span>
+<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_engine</span>(<span class="st">&quot;lm&quot;</span>)</span>
+<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a>workflow_spec <span class="ot">&lt;-</span> <span class="fu">workflow</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb41-7"><a href="#cb41-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_model</span>(model_spec) <span class="sc">%&gt;%</span></span>
+<span id="cb41-8"><a href="#cb41-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_formula</span>(Quality.of.Sleep <span class="sc">~</span> .)</span>
+<span id="cb41-9"><a href="#cb41-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-10"><a href="#cb41-10" aria-hidden="true" tabindex="-1"></a>cv_results <span class="ot">&lt;-</span> </span>
+<span id="cb41-11"><a href="#cb41-11" aria-hidden="true" tabindex="-1"></a>  workflow_spec <span class="sc">%&gt;%</span> </span>
+<span id="cb41-12"><a href="#cb41-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fit_resamples</span>(<span class="at">resamples =</span> cv_splits, </span>
+<span id="cb41-13"><a href="#cb41-13" aria-hidden="true" tabindex="-1"></a>                <span class="at">control =</span> <span class="fu">control_resamples</span>(<span class="at">save_pred =</span> <span class="cn">TRUE</span>))</span>
+<span id="cb41-14"><a href="#cb41-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-15"><a href="#cb41-15" aria-hidden="true" tabindex="-1"></a>cv_results <span class="sc">%&gt;%</span> <span class="fu">collect_metrics</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2 × 6
+  .metric .estimator  mean     n std_err .config        
+  &lt;chr&gt;   &lt;chr&gt;      &lt;dbl&gt; &lt;int&gt;   &lt;dbl&gt; &lt;chr&gt;          
+1 rmse    standard   0.400    10  0.0825 pre0_mod0_post0
+2 rsq     standard   0.871    10  0.0445 pre0_mod0_post0</code></pre>
+</div>
+</div>
+<p>Nun fällt der RSME Wert um einiges höher aus. Somit können wir davon ausgehen, dass es sich um Overfitting gehandelt hat.</p>
+<p>Da wir eine hohe Abweichung bei den Vorhersagen habe schauen wir uns ein weiteres Modell an.</p>
 </section>
 <section id="entscheindungsbaum" class="level3">
 <h3 class="anchored" data-anchor-id="entscheindungsbaum">Entscheindungsbaum</h3>
+<p>Schauen wir uns als nächste das <strong>Entscheidungsbaum</strong> Modell an.</p>
 <div class="cell">
 <details class="code-fold">
 <summary>Code anzeigen</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>tree_mod <span class="ot">&lt;-</span> <span class="fu">decision_tree</span>(<span class="at">mode =</span> <span class="st">&quot;regression&quot;</span>) </span>
 <span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a>tree_fit <span class="ot">&lt;-</span> </span>
-<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a>  tree_mod <span class="sc">|&gt;</span> </span>
-<span id="cb43-5"><a href="#cb43-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fit</span>(Quality.of.Sleep <span class="sc">~</span> ., <span class="at">data =</span> train_ready)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a>tree_fit <span class="ot">&lt;-</span> tree_mod <span class="sc">%&gt;%</span> </span>
+<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fit</span>(Quality.of.Sleep <span class="sc">~</span> ., <span class="at">data =</span> train_ready)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
+<p>Betrachten wir auch hier die Fehler der Vorhersage auf dem Gesamten Trainigsdatensatz.</p>
 <div class="cell">
 <details class="code-fold">
 <summary>Code anzeigen</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>pred_tree <span class="ot">&lt;-</span> <span class="fu">predict</span>(tree_fit, <span class="at">new_data =</span> train_ready)</span>
 <span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a>compare <span class="ot">&lt;-</span> train_ready <span class="sc">|&gt;</span> </span>
-<span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(Quality.of.Sleep) <span class="sc">|&gt;</span> </span>
+<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a>compare_tree <span class="ot">&lt;-</span> train_ready <span class="sc">%&gt;%</span> </span>
+<span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(Quality.of.Sleep) <span class="sc">%&gt;%</span></span>
 <span id="cb44-5"><a href="#cb44-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_cols</span>(pred_tree)</span>
-<span id="cb44-6"><a href="#cb44-6" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(compare)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb44-6"><a href="#cb44-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-7"><a href="#cb44-7" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(compare_tree)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 6 × 2
@@ -3262,7 +3301,7 @@ rankdeficient=&quot;NA&quot;)</code></pre>
 <div class="cell">
 <details class="code-fold">
 <summary>Code anzeigen</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="fu">rmse</span>(compare, Quality.of.Sleep, .pred)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="fu">rmse</span>(compare_tree, Quality.of.Sleep, .pred)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 1 × 3
@@ -3271,49 +3310,120 @@ rankdeficient=&quot;NA&quot;)</code></pre>
 1 rmse    standard       0.269</code></pre>
 </div>
 </div>
-</section>
-<section id="random-forest" class="level3">
-<h3 class="anchored" data-anchor-id="random-forest">Random Forest</h3>
+<p>Der RMSE Wert fällt besser aus, als der RMSE Wert nach der Kreuzvalidierung vom <em>Linearen Regressions</em> Modell.</p>
+<p>Auch hier führen wir eine Kreuzvalidierung durch.</p>
 <div class="cell">
 <details class="code-fold">
 <summary>Code anzeigen</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a>forest_mod <span class="ot">&lt;-</span> <span class="fu">rand_forest</span>(<span class="at">trees =</span> <span class="dv">100</span>)  <span class="sc">|&gt;</span>  </span>
-<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">set_mode</span>(<span class="st">&quot;regression&quot;</span>) </span>
-<span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb48-4"><a href="#cb48-4" aria-hidden="true" tabindex="-1"></a>forest_fit <span class="ot">&lt;-</span> forest_mod <span class="sc">|&gt;</span> </span>
-<span id="cb48-5"><a href="#cb48-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fit</span>(Quality.of.Sleep <span class="sc">~</span> ., <span class="at">data =</span> train_ready)</span>
-<span id="cb48-6"><a href="#cb48-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb48-7"><a href="#cb48-7" aria-hidden="true" tabindex="-1"></a>pred_tree3 <span class="ot">&lt;-</span> <span class="fu">predict</span>(forest_fit, <span class="at">new_data =</span> train_ready)</span>
-<span id="cb48-8"><a href="#cb48-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb48-9"><a href="#cb48-9" aria-hidden="true" tabindex="-1"></a>compare3 <span class="ot">&lt;-</span> train_ready <span class="sc">|&gt;</span> </span>
-<span id="cb48-10"><a href="#cb48-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(Quality.of.Sleep) <span class="sc">|&gt;</span> </span>
-<span id="cb48-11"><a href="#cb48-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_cols</span>(pred_tree3)</span>
-<span id="cb48-12"><a href="#cb48-12" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(compare3)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a>cv_splits <span class="ot">&lt;-</span> <span class="fu">vfold_cv</span>(train_ready, <span class="at">v =</span> <span class="dv">10</span>, <span class="at">strata =</span> Quality.of.Sleep)</span>
+<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a>model_spec <span class="ot">&lt;-</span> <span class="fu">decision_tree</span> () <span class="sc">%&gt;%</span></span>
+<span id="cb48-4"><a href="#cb48-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_mode</span>(<span class="st">&quot;regression&quot;</span>)</span>
+<span id="cb48-5"><a href="#cb48-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb48-6"><a href="#cb48-6" aria-hidden="true" tabindex="-1"></a>workflow_spec <span class="ot">&lt;-</span> <span class="fu">workflow</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb48-7"><a href="#cb48-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_model</span>(model_spec) <span class="sc">%&gt;%</span></span>
+<span id="cb48-8"><a href="#cb48-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_formula</span>(Quality.of.Sleep <span class="sc">~</span> .)</span>
+<span id="cb48-9"><a href="#cb48-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb48-10"><a href="#cb48-10" aria-hidden="true" tabindex="-1"></a>cv_results <span class="ot">&lt;-</span> </span>
+<span id="cb48-11"><a href="#cb48-11" aria-hidden="true" tabindex="-1"></a>  workflow_spec <span class="sc">%&gt;%</span> </span>
+<span id="cb48-12"><a href="#cb48-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fit_resamples</span>(<span class="at">resamples =</span> cv_splits, </span>
+<span id="cb48-13"><a href="#cb48-13" aria-hidden="true" tabindex="-1"></a>                <span class="at">control =</span> <span class="fu">control_resamples</span>(<span class="at">save_pred =</span> <span class="cn">TRUE</span>))</span>
+<span id="cb48-14"><a href="#cb48-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb48-15"><a href="#cb48-15" aria-hidden="true" tabindex="-1"></a>cv_results <span class="sc">%&gt;%</span> <span class="fu">collect_metrics</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2 × 6
+  .metric .estimator  mean     n std_err .config        
+  &lt;chr&gt;   &lt;chr&gt;      &lt;dbl&gt; &lt;int&gt;   &lt;dbl&gt; &lt;chr&gt;          
+1 rmse    standard   0.287    10  0.0376 pre0_mod0_post0
+2 rsq     standard   0.941    10  0.0125 pre0_mod0_post0</code></pre>
+</div>
+</div>
+<p>Die Kreuzvalidierung ergibt einen RMSE Wert der höher ist also der RMSE Werte vom <em>Linearen Regressions</em> Modell.</p>
+<p>Somit performed das Modell schlechter und wir versuchen noch ein anderes Modell.</p>
+</section>
+<section id="random-forest" class="level3">
+<h3 class="anchored" data-anchor-id="random-forest">Random Forest</h3>
+<p>Trainieren wir also das <strong>Random Forest</strong> Modell.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code anzeigen</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a>forest_mod <span class="ot">&lt;-</span> <span class="fu">rand_forest</span>(<span class="at">trees =</span> <span class="dv">100</span>)  <span class="sc">%&gt;%</span>  </span>
+<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">set_mode</span>(<span class="st">&quot;regression&quot;</span>) </span>
+<span id="cb50-3"><a href="#cb50-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-4"><a href="#cb50-4" aria-hidden="true" tabindex="-1"></a>forest_fit <span class="ot">&lt;-</span> forest_mod <span class="sc">%&gt;%</span> </span>
+<span id="cb50-5"><a href="#cb50-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fit</span>(Quality.of.Sleep <span class="sc">~</span> ., <span class="at">data =</span> train_ready)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<p>Schauen wir uns die Fehler der Vorhersage auf dem Gesamten Trainigsdatensatz an.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code anzeigen</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a>pred_forest <span class="ot">&lt;-</span> <span class="fu">predict</span>(forest_fit, <span class="at">new_data =</span> train_ready)</span>
+<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-3"><a href="#cb51-3" aria-hidden="true" tabindex="-1"></a>compare_forest <span class="ot">&lt;-</span> train_ready <span class="sc">%&gt;%</span> </span>
+<span id="cb51-4"><a href="#cb51-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(Quality.of.Sleep) <span class="sc">%&gt;%</span></span>
+<span id="cb51-5"><a href="#cb51-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_cols</span>(pred_forest)</span>
+<span id="cb51-6"><a href="#cb51-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-7"><a href="#cb51-7" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(compare_forest)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 6 × 2
   Quality.of.Sleep .pred
              &lt;int&gt; &lt;dbl&gt;
-1                6  5.97
-2                6  6.05
-3                6  6.05
-4                4  4.37
-5                4  4.37
-6                4  4.37</code></pre>
+1                6  6.07
+2                6  6.07
+3                6  6.07
+4                4  4.30
+5                4  4.30
+6                4  4.30</code></pre>
 </div>
 </div>
 <div class="cell">
 <details class="code-fold">
 <summary>Code anzeigen</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="fu">rmse</span>(compare3, Quality.of.Sleep, .pred)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a><span class="fu">rmse</span>(compare_forest, Quality.of.Sleep, .pred)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 1 × 3
   .metric .estimator .estimate
   &lt;chr&gt;   &lt;chr&gt;          &lt;dbl&gt;
-1 rmse    standard       0.131</code></pre>
+1 rmse    standard       0.133</code></pre>
 </div>
 </div>
+<p>Hier haben wir die geringsten RMSE Wert von alles bisher verwendente Modellen.</p>
+<p>Führen wir auch hier eine Kreuzvalidierung aus.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code anzeigen</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb55"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a>cv_splits <span class="ot">&lt;-</span> <span class="fu">vfold_cv</span>(train_ready, <span class="at">v =</span> <span class="dv">10</span>, <span class="at">strata =</span> Quality.of.Sleep)</span>
+<span id="cb55-2"><a href="#cb55-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb55-3"><a href="#cb55-3" aria-hidden="true" tabindex="-1"></a>model_spec <span class="ot">&lt;-</span> <span class="fu">rand_forest</span> (<span class="at">trees =</span> <span class="dv">100</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb55-4"><a href="#cb55-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_mode</span>(<span class="st">&quot;regression&quot;</span>)</span>
+<span id="cb55-5"><a href="#cb55-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb55-6"><a href="#cb55-6" aria-hidden="true" tabindex="-1"></a>workflow_spec <span class="ot">&lt;-</span> <span class="fu">workflow</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb55-7"><a href="#cb55-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_model</span>(model_spec) <span class="sc">%&gt;%</span></span>
+<span id="cb55-8"><a href="#cb55-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_formula</span>(Quality.of.Sleep<span class="sc">~</span>.)</span>
+<span id="cb55-9"><a href="#cb55-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb55-10"><a href="#cb55-10" aria-hidden="true" tabindex="-1"></a>cv_results <span class="ot">&lt;-</span> </span>
+<span id="cb55-11"><a href="#cb55-11" aria-hidden="true" tabindex="-1"></a>  workflow_spec <span class="sc">%&gt;%</span> </span>
+<span id="cb55-12"><a href="#cb55-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fit_resamples</span>(<span class="at">resamples =</span> cv_splits, </span>
+<span id="cb55-13"><a href="#cb55-13" aria-hidden="true" tabindex="-1"></a>                <span class="at">control =</span> <span class="fu">control_resamples</span>(<span class="at">save_pred =</span> <span class="cn">TRUE</span>))</span>
+<span id="cb55-14"><a href="#cb55-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb55-15"><a href="#cb55-15" aria-hidden="true" tabindex="-1"></a>cv_results <span class="sc">%&gt;%</span> <span class="fu">collect_metrics</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2 × 6
+  .metric .estimator  mean     n std_err .config        
+  &lt;chr&gt;   &lt;chr&gt;      &lt;dbl&gt; &lt;int&gt;   &lt;dbl&gt; &lt;chr&gt;          
+1 rmse    standard   0.241    10 0.0332  pre0_mod0_post0
+2 rsq     standard   0.963    10 0.00889 pre0_mod0_post0</code></pre>
+</div>
+</div>
+<p>Der RMSE wert ist nur leicht höher als der vorherige und fällt im Gegensatz zu den vorherigen Modellen am Geringsten aus.</p>
+</section>
+<section id="modelle-optimieren" class="level3">
+<h3 class="anchored" data-anchor-id="modelle-optimieren">Modelle optimieren</h3>
 </section>
 </section>
 <section id="modell-beurteilen" class="level2">
@@ -3321,18 +3431,18 @@ rankdeficient=&quot;NA&quot;)</code></pre>
 <div class="cell">
 <details class="code-fold">
 <summary>Code anzeigen</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a>test_ready <span class="ot">&lt;-</span> <span class="fu">bake</span>(prep_rec, <span class="at">new_data =</span> final_sleep_data_test)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb57"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a>test_ready <span class="ot">&lt;-</span> <span class="fu">bake</span>(prep_rec, <span class="at">new_data =</span> final_sleep_data_test)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
 <div class="cell">
 <details class="code-fold">
 <summary>Code anzeigen</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a>pred_test <span class="ot">&lt;-</span> <span class="fu">predict</span>(forest_fit, <span class="at">new_data =</span> test_ready)</span>
-<span id="cb53-2"><a href="#cb53-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb53-3"><a href="#cb53-3" aria-hidden="true" tabindex="-1"></a>compare_test <span class="ot">&lt;-</span> test_ready <span class="sc">|&gt;</span> </span>
-<span id="cb53-4"><a href="#cb53-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(Quality.of.Sleep) <span class="sc">|&gt;</span> </span>
-<span id="cb53-5"><a href="#cb53-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_cols</span>(pred_test)</span>
-<span id="cb53-6"><a href="#cb53-6" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(compare_test)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb58"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a>pred_test <span class="ot">&lt;-</span> <span class="fu">predict</span>(forest_fit, <span class="at">new_data =</span> test_ready)</span>
+<span id="cb58-2"><a href="#cb58-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb58-3"><a href="#cb58-3" aria-hidden="true" tabindex="-1"></a>compare_test <span class="ot">&lt;-</span> test_ready <span class="sc">|&gt;</span> </span>
+<span id="cb58-4"><a href="#cb58-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(Quality.of.Sleep) <span class="sc">|&gt;</span> </span>
+<span id="cb58-5"><a href="#cb58-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_cols</span>(pred_test)</span>
+<span id="cb58-6"><a href="#cb58-6" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(compare_test)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 6 × 2
@@ -3340,10 +3450,20 @@ rankdeficient=&quot;NA&quot;)</code></pre>
              &lt;int&gt; &lt;dbl&gt;
 1                7  7.02
 2                7  7.02
-3                7  7.01
-4                5  5.21
-5                6  6.07
+3                7  7.02
+4                5  5.23
+5                6  6.03
 6                7  7.02</code></pre>
+</div>
+<details class="code-fold">
+<summary>Code anzeigen</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb60"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a><span class="fu">rmse</span>(compare_test, Quality.of.Sleep, .pred)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 3
+  .metric .estimator .estimate
+  &lt;chr&gt;   &lt;chr&gt;          &lt;dbl&gt;
+1 rmse    standard       0.194</code></pre>
 </div>
 </div>
 </section>

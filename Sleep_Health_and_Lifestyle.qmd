@@ -145,7 +145,6 @@ final_sleep_data <-
   )
 ```
 
-
 Am Ende werfen wir noch einen kurzen Blick ins finale Datenset.
 
 ```{r, message=FALSE}
@@ -172,7 +171,6 @@ final_sleep_data_train <- training(sleep_data_split)
 final_sleep_data_test <- testing(sleep_data_split)
 final_sleep_data <- final_sleep_data_train
 ```
-
 
 ## Explorative Datenanalyse
 
@@ -357,9 +355,9 @@ Allem im alles kann man also sagen, dass der zweige Graph eindeutigere Ergebniss
 
 Um ein genauere Ergebniss zu bekommen müsste man sich noch weiter Daten anschauen. Insbesondere die Daten die im hohen Alter eine gute Schlafqulität aussagen, da dies wiedersprüchen zum zweiten Graphen sind. Man könne also versuchen sich die wiedersprüchleichen Daten durch andere Faktoren zu deuten.
 
-## Modellen
+## Daten aufbereiten
 
-### Lineare Regression
+Bereit wir die Daten final auf um ein Trainier bereiten Datensatz zu erhalten.
 
 ```{r}
 rec <- recipe(Quality.of.Sleep ~ ., data = final_sleep_data_train) |>
@@ -374,72 +372,175 @@ train_ready <- bake(prep_rec, new_data = NULL)
 train_ready
 ```
 
+## Modellieren
+
+### Lineare Regression
+
+Trainieren wir zuerst ein **lineares Regressionsmodell**
 
 ```{r}
-lm_model <- linear_reg() |> set_engine("lm")
+lm_model <- linear_reg() %>% 
+  set_engine("lm")
 
-lm_fit <- lm_model |> fit(Quality.of.Sleep ~ ., data = train_ready)
+lm_fit <- lm_model %>% 
+  fit(Quality.of.Sleep ~ ., data = train_ready)
 
-lm_fit |> extract_fit_engine() |> summary()
+lm_fit %>% 
+  extract_fit_engine() %>% 
+  summary()
 ```
+
+Schauen wir uns die Fehler der Vorhersage auf dem Gesamten Trainigsdatensatz an.
+
+```{r, warning=FALSE}
+pred_lm <- predict(lm_fit, new_data = train_ready)
+
+compare_lm <- train_ready %>% 
+  select(Quality.of.Sleep) %>% 
+  bind_cols(pred_lm)
+
+head(compare_lm)
+```
+
+Nun berechnen wird den RSME Wert. 
 
 ```{r}
-pred_reg <- predict(lm_fit, new_data = train_ready)
-
-compare <- train_ready |> 
-  select(Quality.of.Sleep) |> 
-  bind_cols(pred_reg)
-
-head(compare)
+rmse(compare_lm, Quality.of.Sleep, .pred)
 ```
 
-```{r}
-rmse(compare, Quality.of.Sleep, .pred)
+Dieser liegt in einem guten Bereich. Somit scheinen die Vorhersagen vom Eigentlichen Wert nicht stark abzuweichen.
+
+Da der RSME Wert so niedrig ist führen wir zudem noch eine Kreuzvalidierung durch um zu überprüfen ob Overfitting vorhanden ist.
+
+```{r, message=FALSE}
+cv_splits <- vfold_cv(train_ready, v = 10, strata = Quality.of.Sleep)
+
+model_spec <- linear_reg () %>%
+  set_engine("lm")
+
+workflow_spec <- workflow() %>%
+  add_model(model_spec) %>%
+  add_formula(Quality.of.Sleep ~ .)
+
+cv_results <- 
+  workflow_spec %>% 
+  fit_resamples(resamples = cv_splits, 
+                control = control_resamples(save_pred = TRUE))
+
+cv_results %>% collect_metrics()
 ```
+
+Nun fällt der RSME Wert um einiges höher aus. Somit können wir davon ausgehen, dass es sich um Overfitting gehandelt hat.
+
+Da wir eine hohe Abweichung bei den Vorhersagen habe schauen wir uns ein weiteres Modell an.
 
 ### Entscheindungsbaum
+
+Schauen wir uns als nächste das **Entscheidungsbaum** Modell an.
 
 ```{r}
 tree_mod <- decision_tree(mode = "regression") 
 
-tree_fit <- 
-  tree_mod |> 
+tree_fit <- tree_mod %>% 
   fit(Quality.of.Sleep ~ ., data = train_ready)
 ```
+
+Betrachten wir auch hier die Fehler der Vorhersage auf dem Gesamten Trainigsdatensatz.
 
 ```{r}
 pred_tree <- predict(tree_fit, new_data = train_ready)
 
-compare <- train_ready |> 
-  select(Quality.of.Sleep) |> 
+compare_tree <- train_ready %>% 
+  select(Quality.of.Sleep) %>%
   bind_cols(pred_tree)
-head(compare)
+
+head(compare_tree)
 ```
 
 ```{r}
-rmse(compare, Quality.of.Sleep, .pred)
+rmse(compare_tree, Quality.of.Sleep, .pred)
 ```
+
+Der RMSE Wert fällt besser aus, als der RMSE Wert nach der Kreuzvalidierung vom *Linearen Regressions* Modell.
+
+Auch hier führen wir eine Kreuzvalidierung durch.
+
+```{r}
+cv_splits <- vfold_cv(train_ready, v = 10, strata = Quality.of.Sleep)
+
+model_spec <- decision_tree () %>%
+  set_mode("regression")
+
+workflow_spec <- workflow() %>%
+  add_model(model_spec) %>%
+  add_formula(Quality.of.Sleep ~ .)
+
+cv_results <- 
+  workflow_spec %>% 
+  fit_resamples(resamples = cv_splits, 
+                control = control_resamples(save_pred = TRUE))
+
+cv_results %>% collect_metrics()
+```
+
+Die Kreuzvalidierung ergibt einen RMSE Wert der höher ist also der RMSE Werte vom *Linearen Regressions* Modell.
+
+Somit performed das Modell schlechter und wir versuchen noch ein anderes Modell.
 
 ### Random Forest
 
+Trainieren wir also das **Random Forest** Modell.
+
 ```{r}
-forest_mod <- rand_forest(trees = 100)  |>  
+forest_mod <- rand_forest(trees = 100)  %>%  
     set_mode("regression") 
 
-forest_fit <- forest_mod |> 
+forest_fit <- forest_mod %>% 
   fit(Quality.of.Sleep ~ ., data = train_ready)
+```
 
-pred_tree3 <- predict(forest_fit, new_data = train_ready)
+Schauen wir uns die Fehler der Vorhersage auf dem Gesamten Trainigsdatensatz an.
 
-compare3 <- train_ready |> 
-  select(Quality.of.Sleep) |> 
-  bind_cols(pred_tree3)
-head(compare3)
+```{r}
+
+pred_forest <- predict(forest_fit, new_data = train_ready)
+
+compare_forest <- train_ready %>% 
+  select(Quality.of.Sleep) %>%
+  bind_cols(pred_forest)
+
+head(compare_forest)
 ```
 
 ```{r}
-rmse(compare3, Quality.of.Sleep, .pred)
+rmse(compare_forest, Quality.of.Sleep, .pred)
 ```
+
+Hier haben wir die geringsten RMSE Wert von alles bisher verwendente Modellen.
+
+Führen wir auch hier eine Kreuzvalidierung aus.
+
+```{r}
+cv_splits <- vfold_cv(train_ready, v = 10, strata = Quality.of.Sleep)
+
+model_spec <- rand_forest (trees = 100) %>%
+  set_mode("regression")
+
+workflow_spec <- workflow() %>%
+  add_model(model_spec) %>%
+  add_formula(Quality.of.Sleep~.)
+
+cv_results <- 
+  workflow_spec %>% 
+  fit_resamples(resamples = cv_splits, 
+                control = control_resamples(save_pred = TRUE))
+
+cv_results %>% collect_metrics()
+```
+
+Der RMSE wert ist nur leicht höher als der vorherige und fällt im Gegensatz zu den vorherigen Modellen am Geringsten aus.
+
+### Modelle optimieren
 
 ## Modell beurteilen
 
@@ -454,6 +555,8 @@ compare_test <- test_ready |>
   select(Quality.of.Sleep) |> 
   bind_cols(pred_test)
 head(compare_test)
+
+rmse(compare_test, Quality.of.Sleep, .pred)
 ```
 
 # Evaluieren
