@@ -543,20 +543,23 @@ Der RMSE wert ist nur leicht höher als der vorherige und fällt im Gegensatz zu
 ### Modelle optimieren
 
 ```{r}
+forest_rec <- recipe(Quality.of.Sleep ~ ., data = final_sleep_data_train) |>
+  step_impute_median(all_numeric_predictors()) |>
+  step_dummy(all_nominal_predictors()) |>
+  step_normalize(all_predictors()) 
+
 forest_mod <- rand_forest(mtry = tune(), min_n = tune(), trees = 100)  %>%  
     set_mode("regression") 
 
 forest_wflow <- workflow() %>%
   add_model(forest_mod) %>%
-  add_formula(Quality.of.Sleep ~ .)
+  add_recipe(forest_rec)
   
 forest_param <- forest_wflow %>% 
   extract_parameter_set_dials() %>%
-  update(
-    mtry = mtry(c(1, 10))
-  )
+  finalize(final_sleep_data_train)
 
-forest_folds <- vfold_cv(train_ready)
+forest_folds <- vfold_cv(final_sleep_data_train)
 
 forest_tune <- forest_wflow %>%
   tune_grid(
@@ -568,11 +571,19 @@ select_best(forest_tune, metric = "rmse")
 ```
 
 ```{r}
-final_forest_mod <- rand_forest(mtry = 10, min_n = 2, trees = 100)  %>%  
-    set_mode("regression") 
+final_forest_param <- 
+  tibble(
+    mtry = 12,
+    min_n = 2
+  )
 
-final_forest_fit <- final_forest_mod %>% 
-  fit(Quality.of.Sleep ~ ., data = train_ready)
+final_forest_wflow <- forest_wflow %>%
+  finalize_workflow(final_forest_param)
+
+final_forest_wflow
+
+final_forest_fit <- final_forest_wflow %>%
+  fit(final_sleep_data_train)
 ```
 
 
@@ -583,9 +594,9 @@ test_ready <- bake(prep_rec, new_data = final_sleep_data_test)
 ```
 
 ```{r}
-pred_test <- predict(final_forest_fit, new_data = test_ready)
+pred_test <- predict(final_forest_fit, new_data = final_sleep_data_test)
 
-compare_test <- test_ready |> 
+compare_test <- final_sleep_data_test |> 
   select(Quality.of.Sleep) |> 
   bind_cols(pred_test)
 head(compare_test)
