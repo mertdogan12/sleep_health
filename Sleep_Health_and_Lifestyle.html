@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Mert Baki Dogan">
-<meta name="dcterms.date" content="2026-01-20">
+<meta name="dcterms.date" content="2026-01-21">
 
 <title>Sleep Health and Lifestyle</title>
 <style>
@@ -2225,8 +2225,8 @@ vertical-align: -.125em;
   <li><a href="#lineare-regression" id="toc-lineare-regression" class="nav-link" data-scroll-target="#lineare-regression">Lineare Regression</a></li>
   <li><a href="#entscheindungsbaum" id="toc-entscheindungsbaum" class="nav-link" data-scroll-target="#entscheindungsbaum">Entscheindungsbaum</a></li>
   <li><a href="#random-forest" id="toc-random-forest" class="nav-link" data-scroll-target="#random-forest">Random Forest</a></li>
-  <li><a href="#modelle-optimieren" id="toc-modelle-optimieren" class="nav-link" data-scroll-target="#modelle-optimieren">Modelle optimieren</a></li>
   </ul></li>
+  <li><a href="#modelle-optimieren" id="toc-modelle-optimieren" class="nav-link" data-scroll-target="#modelle-optimieren">Modelle optimieren</a></li>
   <li><a href="#modell-beurteilen" id="toc-modell-beurteilen" class="nav-link" data-scroll-target="#modell-beurteilen">Modell beurteilen</a></li>
   </ul></li>
   <li><a href="#evaluieren" id="toc-evaluieren" class="nav-link" data-scroll-target="#evaluieren">Evaluieren</a></li>
@@ -2255,7 +2255,7 @@ vertical-align: -.125em;
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">January 20, 2026</p>
+      <p class="date">January 21, 2026</p>
     </div>
   </div>
   
@@ -2671,6 +2671,7 @@ $ Sleep.Disorder          &lt;chr&gt; &quot;None&quot;, &quot;None&quot;, &quot;
 </div>
 </div>
 <p>Es gibt 4 Kategorien. Sortiert ergibt das also: <em>“Normal” &lt; “Normal Weight” &lt; “Overweight” &lt; “Obese”</em></p>
+<p>begründen</p>
 <div class="cell">
 <details class="code-fold">
 <summary>Code anzeigen</summary>
@@ -3444,8 +3445,9 @@ F-statistic: 379.4 on 13 and 283 DF,  p-value: &lt; 2.2e-16</code></pre>
 <p>Der RMSE wert ist nur leicht höher als der vorherige und fällt im Gegensatz zu den vorherigen Modellen immernoch am Geringsten aus.</p>
 <p>Allem im allen performed also das <strong>Random Forest</strong> Modell am besten. Somit werden wir dies auch verwenden.</p>
 </section>
-<section id="modelle-optimieren" class="level3">
-<h3 class="anchored" data-anchor-id="modelle-optimieren">Modelle optimieren</h3>
+</section>
+<section id="modelle-optimieren" class="level2">
+<h2 class="anchored" data-anchor-id="modelle-optimieren">Modelle optimieren</h2>
 <p>Nun optimieren wir das <strong>Random Forest</strong> Modell noch.</p>
 <p>Wir verwenden dazu ein Reguläres Grid um die beste combination der Parameter <strong>mtry</strong> und <strong>min_n</strong> zu finden.</p>
 <div class="cell">
@@ -3496,7 +3498,6 @@ F-statistic: 379.4 on 13 and 283 DF,  p-value: &lt; 2.2e-16</code></pre>
 <span id="cb63-5"><a href="#cb63-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fit</span>(Quality.of.Sleep <span class="sc">~</span> ., <span class="at">data =</span> train_ready)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
-</section>
 </section>
 <section id="modell-beurteilen" class="level2">
 <h2 class="anchored" data-anchor-id="modell-beurteilen">Modell beurteilen</h2>
