@@ -131,7 +131,7 @@ unique(final_sleep_data$BMI.Category)
 
 Es gibt 4 Kategorien. Sortiert ergibt das also: *"Normal" \< "Normal Weight" \< "Overweight" \< "Obese"*
 
-begründen
+Die BMI Kategorie Untergewicht gibt es nicht. Somit gehen wir davon aus, dass *Normal* die Kategorie Untergewicht ist.
 
 ```{r, message=FALSE}
 final_sleep_data$BMI.Category <-
@@ -266,7 +266,7 @@ final_sleep_data %>%
   )
 ```
 
-Es zeigt sich kein eindeutiger Zusammenhang zwischen körperlicher Aktivität und Schlafqualität. Es lässt sich jedoch leichten Anstiegt erkennen. Die Korrelation ist leicht positiv und liegt bei **\`r cor(final_sleep_data**$Physical.Activity.Level, final_sleep_data$Quality.of.Sleep)\`\`
+Es zeigt sich kein eindeutiger Zusammenhang zwischen körperlicher Aktivität und Schlafqualität. Es lässt sich jedoch leichten Anstiegt erkennen. Die Korrelation ist leicht positiv und liegt bei **`r cor(final_sleep_data$Physical.Activity.Level, final_sleep_data$Quality.of.Sleep)`**
 
 Zudem sind zwei größere Ausreißer sichtbar. Einen bei einer guten Schlafqualität trotz körperlicher Aktivität und einer bei schlechter Schlafqualität trotz hoher körperlicher Aktivität. Diese haben jedoch ein hohes und niedriges Stresslevel. Die Schlafqualität ist in diesen Fällen also von Stresslevel beeinflusst.
 
@@ -290,11 +290,11 @@ final_sleep_data %>%
   )
 ```
 
-Man kann bei dem Daten sagen, dass die Daten eine hohe Spannweite haben. Zu erkennen ist aber, dass sich die Personen mit Schlafstörung sich mehr in dem Bereicht mit wenig Täglischer Körperlicher Aktivität ansammeln.
+Die Daten weise insgesamt eine hohe Spannweite auf. Es ist jedoch eine deutliche Häufung von Personen mit Schlafstörungen im Bereich geringer täglicher körperlicher Aktivität zu erkennen.
 
-Somit bestätigt dieser Graph den vorherigen Graphen. Mehr Körperliche Aktivität scheint also die Schlafqualität positiv zu beeinflussen.
+Dies korrespondiert mit dem vorherigen Darstellung und stützt die Annahme, dass mehr körperliche Aktivität die Schlafqualität positiv beeinflusst.
 
-Um ein noch genaueres Bild zu erhallten schauen wir uns zudem noch den zusammenhang zwischen den täglischen Schritten und der Schlafqualität. Dies tuhen wir, da es sich bei den Täglischen schritten auch als Körperliche Aktivität zählen kann.
+Um den Zusammenhand zwichen körperlicher Aktivität und der Schlaqualität zu untersuchen, schhauen wir uns noch die tägliche Schrittzahl an. Die Schrittzahl dient hierbei als weiterer Indikator für die körperliche Aktivität.
 
 ```{r message=FALSE, warning=FALSE}
 final_sleep_data %>%
@@ -600,7 +600,7 @@ best_param
 Mit dem Paremtern trainieren wir ein optimiertes Random Forest Modell.
 
 ```{r}
-final_forest_mod <- rand_forest(mtry = best_param$mtry, min_n = best_param$min_n, trees = 1000)  %>%  
+final_forest_mod <- rand_forest(mtry = best_param$mtry, min_n = best_param$min_n, trees = 1000)  %>%
     set_mode("regression") 
 
 final_forest_fit <- final_forest_mod %>% 
@@ -609,9 +609,13 @@ final_forest_fit <- final_forest_mod %>%
 
 ## Modell beurteilen
 
+Baken wir den Testdatensatz zuerst um unseren finalen Testdatensatz zu bekommen.
+
 ```{r}
 test_ready <- bake(prep_rec, new_data = final_sleep_data_test)
 ```
+
+Nun testen wir unser Modell mit dem fertigen Test Datensatz.
 
 ```{r}
 pred_test <- predict(final_forest_fit, new_data = test_ready)
@@ -623,11 +627,21 @@ compare_test <- final_sleep_data_test %>%
 head(compare_test)
 ```
 
+Schauen wir uns final noch den RMSE Wert an.
+
 ```{r}
 rmse(compare_test, Quality.of.Sleep, .pred)
 ```
 
+Dieser liegt in einem niedrigen Bereich.
+
 # Evaluieren
+
+Allem im allem kann man sagen, dass das Modell *Random Forest* am besten bei diesem Datensatz performt. Dies konnten wir durch das Vergleichen der RMSE Werte festlegen.
+
+Durch das tunen der Parameter *mtry* und *min_n* konnten wir die Performance noch verbessern. Somit haben wir am Ende ein gut performendes Modell mit dem man weiter arbeiten kann.
+
+Naturlich ist der Datensatz noch klein, somit müsste man das Modell auch mit mehr Daten testen um ein genaueres Ergebnis zu bekommen. Auch die Schlussfolgerung der Explorativen Datenanalyse würde durch mehr Daten und das einbeziehen von mehr Variablen ein eindeutigeres Ergebniss liefern.
 
 # Quellen
 
