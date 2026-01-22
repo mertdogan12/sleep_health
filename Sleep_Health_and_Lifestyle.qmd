@@ -21,7 +21,7 @@ library(corrplot)
 
 # Aufgabenstellung und Daten verstehen
 
-In dieser Arbeit soll untersucht werden, wie sich verschiedene Faktoren auf die Schlafqualität auswirken. Dabei geht es nicht nur darum, ob sich diese Faktoren auswirken, sondern auch, wie stark ihr Einfluss ist. Anschließend soll ein regressives Machine-Learning-Modell entwickelt werden, das die Schlafqualität vorhersagt.
+In dieser Arbeit soll untersucht werden, wie sich verschiedene Faktoren auf die Schlafqualität auswirken. Dabei geht es nicht nur darum, ob sich diese Faktoren auswirken, sondern auch, wie stark ihr Einfluss ist. Anschließend soll ein regressives Machine-Learning-Modell trainiert werden, das die Schlafqualität vorhersagt.
 
 Dazu steht uns der Datensatz *Sleep Health and Lifestyle Dataset* zur Verfügung. Dieser Datensatz enthält Informationen über den Lebensstil und die Schlafqualität verschiedener Personen. Er ist unter folgendem Link zu finden: <https://www.kaggle.com/datasets/uom190346a/sleep-health-and-lifestyle-dataset>
 
@@ -103,7 +103,7 @@ final_sleep_data$Gender <-
   as.factor(final_sleep_data$Gender)
 ```
 
-Da für uns nicht relevant ist, um welche Schlafstörung es sich genau handelt, geben wir nur an, ob eine Schlafstörung vorhanden ist.
+Da für uns es nicht relevant ist, um welche Schlafstörung es sich genau handelt, geben wir nur an, ob eine Schlafstörung vorhanden ist.
 
 ```{r, message=FALSE}
 final_sleep_data <- 
@@ -119,7 +119,7 @@ final_sleep_data$Sleep.Disorder <-
   as_factor()
 ```
 
-Um die Weiterverarbeitung zu vereinfachen, wandeln wir die *BMI.Category* zu einem Faktor um. Dabei beachten wir aber auch die Reihenfolge der Kategorien.
+Um die Weiterverarbeitung zu vereinfachen, wandeln wir die *BMI.Category* zu einem Faktor um. Dabei werden wir auch die Reihenfolge der Kategorien beachten.
 
 Dazu schauen wir uns erst einmal an, welche Kategorien in *BMI.Category* enthalten sind.
 
@@ -245,7 +245,7 @@ Trotz des anfänglichen Rückgangs kann man sagen, dass ein höheres Stresslevel
 
 Damit bestätigen sich die vorherigen Ergebnisse und man kann sagen:
 
-**Weniger Stress wirkt sich positiv auf die Schlafqualität aus**
+**Ein hohes Level an Stress wirkt sich negativ auf die Schlafqualität aus.**
 
 Schauen wir uns als nächstes an, wie sich körperliche Aktivität auf die Schlafqualität auswirkt.
 
@@ -333,7 +333,7 @@ final_sleep_data %>%
 
 **Somit kann man aus den Diagrammen schlussfolgern, dass die körperliche Aktivität einen leichten Einfluss auf die Schlafqualität hat.**
 
-Somit lässt sich die These nur zum Teil bestätigen. Wenig Stress hat einen großen Einfluss auf die Schlafqualität. Dagegen hat die körperliche Aktivität nur einen leichten Einfluss auf die Schlafqualität.
+Somit lässt sich die These nur zum Teil bestätigen. Viel Stress hat einen großen Einfluss auf die Schlafqualität. Dagegen hat die körperliche Aktivität nur einen leichten Einfluss auf die Schlafqualität.
 
 ### Untersuchung der zweiten These
 
@@ -370,9 +370,9 @@ Der Graph zeigt, dass Schlafstörungen häufiger im hohen Alter auftreten. Diese
 
 Dabei ist jedoch zu berücksichtigen, dass es sich hierbei um eine schwach positive Korrelation handelt. Zudem ist die Schlafqualität eine subjektive Variable. Darüber hinaus verläuft die Entwicklung nicht linear, sondern sinkt zwischendurch.
 
-Alles in allem kann man also sagen, dass der zweite Graph eindeutigere Ergebnisse liefert. Somit wird die am Anfang aufgestellte These widerlegt: Schlafqualität scheint im Alter schlechter zu werden. Jedoch kann man nicht sagen, dass dies ein eindeutiges Ergebnis ist, da sich die Graphen teilweise widersprechen.
+Alles in allem kann man also sagen, dass der zweite Graph eindeutigere Ergebnisse liefert. Somit wird die am Anfang aufgestellte These bestätigt: Schlafqualität scheint im Alter abzunehmen. Jedoch kann man nicht sagen, dass dies ein eindeutiges Ergebnis ist, da sich die Graphen teilweise widersprechen.
 
-Um ein genaueres Ergebnis zu erhalten, müsste man sich noch weitere Daten anschauen – insbesondere die Daten, die im hohen Alter eine gute Schlafqualität aufweisen, da dies dem zweiten Graphen widerspricht. Man könnte also versuchen, die widersprüchlichen Daten durch andere Faktoren zu interpretieren.
+Um ein genaueres Ergebnis zu erhalten, müsste man sich noch weitere Daten anschauen - insbesondere die Daten, die im hohen Alter eine gute Schlafqualität aufweisen, da dies dem zweiten Graphen widerspricht. Man könnte also versuchen, die widersprüchlichen Daten durch andere Faktoren zu interpretieren.
 
 ## Daten aufbereiten
 

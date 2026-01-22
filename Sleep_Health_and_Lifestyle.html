@@ -2269,7 +2269,7 @@ vertical-align: -.125em;
 
 <section id="aufgabenstellung-und-daten-verstehen" class="level1">
 <h1>Aufgabenstellung und Daten verstehen</h1>
-<p>In dieser Arbeit soll untersucht werden, wie sich verschiedene Faktoren auf die Schlafqualität auswirken. Dabei geht es nicht nur darum, ob sich diese Faktoren auswirken, sondern auch, wie stark ihr Einfluss ist. Anschließend soll ein regressives Machine-Learning-Modell entwickelt werden, das die Schlafqualität vorhersagt.</p>
+<p>In dieser Arbeit soll untersucht werden, wie sich verschiedene Faktoren auf die Schlafqualität auswirken. Dabei geht es nicht nur darum, ob sich diese Faktoren auswirken, sondern auch, wie stark ihr Einfluss ist. Anschließend soll ein regressives Machine-Learning-Modell trainiert werden, das die Schlafqualität vorhersagt.</p>
 <p>Dazu steht uns der Datensatz <em>Sleep Health and Lifestyle Dataset</em> zur Verfügung. Dieser Datensatz enthält Informationen über den Lebensstil und die Schlafqualität verschiedener Personen. Er ist unter folgendem Link zu finden: <a href="https://www.kaggle.com/datasets/uom190346a/sleep-health-and-lifestyle-dataset" class="uri">https://www.kaggle.com/datasets/uom190346a/sleep-health-and-lifestyle-dataset</a></p>
 <p>Zu Beginn formulieren wir zwei Thesen, die wir mit Hilfe des Datensatzes überprüfen möchten.</p>
 <p><strong>These 1: Wenig Stress und viel körperliche Aktivität haben einen großen Einfluss auf eine gute Schlafqualität</strong></p>
@@ -2618,7 +2618,7 @@ $ Sleep.Disorder          &lt;chr&gt; &quot;None&quot;, &quot;None&quot;, &quot;
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as.factor</span>(final_sleep_data<span class="sc">$</span>Gender)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
-<p>Da für uns nicht relevant ist, um welche Schlafstörung es sich genau handelt, geben wir nur an, ob eine Schlafstörung vorhanden ist.</p>
+<p>Da für uns es nicht relevant ist, um welche Schlafstörung es sich genau handelt, geben wir nur an, ob eine Schlafstörung vorhanden ist.</p>
 <div class="cell">
 <details class="code-fold">
 <summary>Code anzeigen</summary>
@@ -2636,7 +2636,7 @@ $ Sleep.Disorder          &lt;chr&gt; &quot;None&quot;, &quot;None&quot;, &quot;
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_factor</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
-<p>Um die Weiterverarbeitung zu vereinfachen, wandeln wir die <em>BMI.Category</em> zu einem Faktor um. Dabei beachten wir aber auch die Reihenfolge der Kategorien.</p>
+<p>Um die Weiterverarbeitung zu vereinfachen, wandeln wir die <em>BMI.Category</em> zu einem Faktor um. Dabei werden wir auch die Reihenfolge der Kategorien beachten.</p>
 <p>Dazu schauen wir uns erst einmal an, welche Kategorien in <em>BMI.Category</em> enthalten sind.</p>
 <div class="cell">
 <details class="code-fold">
@@ -2915,7 +2915,7 @@ Levels: Normal Weight &lt; Overweight &lt; Obese</code></pre>
 <p>Wie zu erkennen ist, liegt der Anteil der Schlafstörungen bei einem Stresslevel von 1 bis 6 unter 50 Prozent. Man kann sogar einen Abfall der Schlafstörungen bis zu einem Stresslevel von 6 erkennen. Ab dem Stresslevel von 6 steigt der Anteil der Schlafstörungen jedoch deutlich an.</p>
 <p>Trotz des anfänglichen Rückgangs kann man sagen, dass ein höheres Stresslevel mit einem erhöhten Auftreten von Schlafstörungen einhergeht.</p>
 <p>Damit bestätigen sich die vorherigen Ergebnisse und man kann sagen:</p>
-<p><strong>Weniger Stress wirkt sich positiv auf die Schlafqualität aus</strong></p>
+<p><strong>Ein hohes Level an Stress wirkt sich negativ auf die Schlafqualität aus.</strong></p>
 <p>Schauen wir uns als nächstes an, wie sich körperliche Aktivität auf die Schlafqualität auswirkt.</p>
 <div class="cell">
 <details class="code-fold">
@@ -3023,7 +3023,7 @@ Levels: Normal Weight &lt; Overweight &lt; Obese</code></pre>
 </div>
 <p>Ähnlich wie im Diagramm <em>Schlafstörungen und körperliche Aktivität</em> weisen Personen ohne Schlafstörung eine größere Spannweite. Zudem kann man nur leicht erkennen, dass ein Großteil der Personen mit Schlafstörung weniger tägliche Schritte haben, also die Personen ohne eine Schlafstörung.</p>
 <p><strong>Somit kann man aus den Diagrammen schlussfolgern, dass die körperliche Aktivität einen leichten Einfluss auf die Schlafqualität hat.</strong></p>
-<p>Somit lässt sich die These nur zum Teil bestätigen. Wenig Stress hat einen großen Einfluss auf die Schlafqualität. Dagegen hat die körperliche Aktivität nur einen leichten Einfluss auf die Schlafqualität.</p>
+<p>Somit lässt sich die These nur zum Teil bestätigen. Viel Stress hat einen großen Einfluss auf die Schlafqualität. Dagegen hat die körperliche Aktivität nur einen leichten Einfluss auf die Schlafqualität.</p>
 </section>
 <section id="untersuchung-der-zweiten-these" class="level3">
 <h3 class="anchored" data-anchor-id="untersuchung-der-zweiten-these">Untersuchung der zweiten These</h3>
@@ -3072,8 +3072,8 @@ Levels: Normal Weight &lt; Overweight &lt; Obese</code></pre>
 </div>
 <p>Der Graph zeigt, dass Schlafstörungen häufiger im hohen Alter auftreten. Dieses Ergebnis steht im Kontrast zum vorherigen Graphen, der einen Anstieg der Schlafqualität mit zunehmendem Alter zeigt.</p>
 <p>Dabei ist jedoch zu berücksichtigen, dass es sich hierbei um eine schwach positive Korrelation handelt. Zudem ist die Schlafqualität eine subjektive Variable. Darüber hinaus verläuft die Entwicklung nicht linear, sondern sinkt zwischendurch.</p>
-<p>Alles in allem kann man also sagen, dass der zweite Graph eindeutigere Ergebnisse liefert. Somit wird die am Anfang aufgestellte These widerlegt: Schlafqualität scheint im Alter schlechter zu werden. Jedoch kann man nicht sagen, dass dies ein eindeutiges Ergebnis ist, da sich die Graphen teilweise widersprechen.</p>
-<p>Um ein genaueres Ergebnis zu erhalten, müsste man sich noch weitere Daten anschauen – insbesondere die Daten, die im hohen Alter eine gute Schlafqualität aufweisen, da dies dem zweiten Graphen widerspricht. Man könnte also versuchen, die widersprüchlichen Daten durch andere Faktoren zu interpretieren.</p>
+<p>Alles in allem kann man also sagen, dass der zweite Graph eindeutigere Ergebnisse liefert. Somit wird die am Anfang aufgestellte These bestätigt: Schlafqualität scheint im Alter abzunehmen. Jedoch kann man nicht sagen, dass dies ein eindeutiges Ergebnis ist, da sich die Graphen teilweise widersprechen.</p>
+<p>Um ein genaueres Ergebnis zu erhalten, müsste man sich noch weitere Daten anschauen - insbesondere die Daten, die im hohen Alter eine gute Schlafqualität aufweisen, da dies dem zweiten Graphen widerspricht. Man könnte also versuchen, die widersprüchlichen Daten durch andere Faktoren zu interpretieren.</p>
 </section>
 </section>
 <section id="daten-aufbereiten-1" class="level2">
