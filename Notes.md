@@ -40,4 +40,8 @@ final_sleep_data %>%
   )
 ```
 
-## Regressions Problem
+Subjektive Daten
+text unter summary
+konfusionsmatrix
+subjective daten
+machine learning problem schreien

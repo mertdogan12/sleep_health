@@ -21,7 +21,7 @@ library(corrplot)
 
 # Aufgabenstellung und Daten verstehen
 
-In dieser Arbeit soll untersucht werden, wie sich verschiedene Faktoren auf die Schlafqualität auswirken. Dabei geht es nicht nur darum, ob sich diese Faktoren auswirken, sondern auch wie stark ihr Einfluss ist.
+In dieser Arbeit soll untersucht werden, wie sich verschiedene Faktoren auf die Schlafqualität auswirken. Dabei geht es nicht nur darum, ob sich diese Faktoren auswirken, sondern auch, wie stark ihr Einfluss ist. Anschließend soll ein regressives Machine-Learning-Modell entwickelt werden, das die Schlafqualität vorhersagt.
 
 Dazu steht uns der Datensatz *Sleep Health and Lifestyle Dataset* zur Verfügung. Dieser Datensatz enthält Informationen über den Lebensstil und die Schlafqualität verschiedener Personen. Er ist unter folgendem Link zu finden: <https://www.kaggle.com/datasets/uom190346a/sleep-health-and-lifestyle-dataset>
 
@@ -61,7 +61,7 @@ Die Variablen haben folgende Bedeutung:
 | Stress.Level | int | Subjektive Bewertung des Stresslevels (1-10) |
 | BMI.Category | chr | BMI Kategorie |
 | Blood.Pressure | char | Blutdruck (systolisch/diastolisch) |
-| Hearth.Rate | int | Ruheherzfrequenz |
+| Heart.Rate | int | Ruheherzfrequenz |
 | Daily.Steps | int | Tägliche Schritte |
 | Sleep.Disorder | chr | Schlafstörung (Keine, Insomnie, Schlafapnoe) |
 
@@ -80,15 +80,13 @@ sleep_data %>% describe_tbl()
 
 Die restlichen Variablen könnten einen Einfluss auf die Schlafqualität haben. Auch wenn wir nicht alle in der explorativen Datenanalyse verwenden, könnten sie uns trotzdem später beim Trainieren des Modells helfen.
 
-# Daten aufbereiten
-
 ```{r}
 summary(sleep_data)
 ```
 
-```{r}
-sleep_data %>% describe()
-```
+Wenn wir uns die Summary anschauen, können wir keine Auffälligkeiten feststellen. Alle Daten wirken realistisch.
+
+# Daten aufbereiten
 
 Erstellen wir unseren finalen Datensatz und entfernen die Variablen *Person.ID* und *Occupation*, da diese für unseren Kontext nicht relevant sind.
 
@@ -98,14 +96,14 @@ final_sleep_data <-
   select(-Person.ID, -Occupation)
 ```
 
-Das Geschlecht ist eine kategorischie Variable. Wandeln wir sie für eine einfachere Weiterverarbeitung in einen Faktor um.
+Das Geschlecht ist eine kategorische Variable. Wandeln wir sie für eine einfachere Weiterverarbeitung in einen Faktor um.
 
 ```{r, message=FALSE}
 final_sleep_data$Gender <-
   as.factor(final_sleep_data$Gender)
 ```
 
-Da für uns nicht relevant ist um welche Schlafstörung es sich genau handelt, geben wir nur an, ob eine Schlafstörung vorhanden ist.
+Da für uns nicht relevant ist, um welche Schlafstörung es sich genau handelt, geben wir nur an, ob eine Schlafstörung vorhanden ist.
 
 ```{r, message=FALSE}
 final_sleep_data <- 
@@ -113,7 +111,7 @@ final_sleep_data <-
   mutate(Sleep.Disorder = Sleep.Disorder != "None")
 ```
 
-Um die Lesbarkeit zu verbessern wandeln wir die *Sleep.Disorder* Variable, in zwei Kategorien um.
+Um die Lesbarkeit zu verbessern, wandeln wir die *Sleep.Disorder* Variable, in zwei Kategorien um.
 
 ```{r, message=FALSE}
 final_sleep_data$Sleep.Disorder <-
@@ -123,26 +121,35 @@ final_sleep_data$Sleep.Disorder <-
 
 Um die Weiterverarbeitung zu vereinfachen, wandeln wir die *BMI.Category* zu einem Faktor um. Dabei beachten wir aber auch die Reihenfolge der Kategorien.
 
-Dazu schauen wir uns erst einmal an welche Kategorien in *BMI.Category* enthalten sind.
+Dazu schauen wir uns erst einmal an, welche Kategorien in *BMI.Category* enthalten sind.
 
 ```{r, message=FALSE}
 unique(final_sleep_data$BMI.Category)
 ```
 
-Es gibt 4 Kategorien. Sortiert ergibt das also: *"Normal" \< "Normal Weight" \< "Overweight" \< "Obese"*
+Die Kategorien *Normal* und *Normal Weight* scheinen dieselben zu sein. Also ersetzen wir *Normal* mit *Normal Weight*.
 
-Die BMI Kategorie Untergewicht gibt es nicht. Somit gehen wir davon aus, dass *Normal* die Kategorie Untergewicht ist.
+```{r}
+final_sleep_data <- final_sleep_data %>%
+  mutate(BMI.Category = replace(BMI.Category, BMI.Category == "Normal", "Normal Weight"))
+
+unique(final_sleep_data$BMI.Category)
+```
+
+Das ergibt 3 Kategorien. Sortiert werden die Kategorien: *"Normal Weight" \< "Overweight" \< "Obese"*
 
 ```{r, message=FALSE}
 final_sleep_data$BMI.Category <-
   final_sleep_data$BMI.Category %>%
   factor(
-    levels = c("Normal", "Normal Weight","Overweight", "Obese"),
+    levels = c("Normal Weight","Overweight", "Obese"),
     ordered = TRUE
     )
+
+unique(final_sleep_data$BMI.Category)
 ```
 
-Die Variable *Blood.Pressure* ist als String im Datensatz. Wir teilen die Variable in den systolischen und diastolischen Wert auf und wandeln ihn in einen Integer um.
+Die Variable *Blood.Pressure* ist als String im Datensatz. Wir teilen die Variable in den systolischen und diastolischen Wert auf und wandeln sie in einen Integer um.
 
 ```{r}
 final_sleep_data <-
@@ -161,24 +168,16 @@ final_sleep_data <-
 Am Ende werfen wir noch einen kurzen Blick in den finalen Datensatz.
 
 ```{r}
-knitr::kable(head(final_sleep_data), caption = "Der Final Datzensatz")
+knitr::kable(head(final_sleep_data), caption = "Der finale Datensatz")
 ```
 
-```{r}
-summary(final_sleep_data)
-```
-
-```{r}
-final_sleep_data %>% describe_tbl()
-```
-
-Nachdem wir den Datensatz fertig aufbereitet haben, widmen wir uns um unserer ersten These.
+Nachdem wir den Datensatz fertig aufbereitet haben, widmen wir uns unserer ersten These.
 
 # Modell bilden
 
 ## Testdaten beiseitelegen
 
-Damit sich keine Data-Snooping-Bias entwickelt legen wir bereits am Anfang einen Teil der Daten beiseite. Diese werden wir dann am Ende dazu verwenden, um das Modell auf noch nicht gesehne Daten zu testen.
+Damit sich keine Data-Snooping-Bias entwickelt, legen wir bereits am Anfang einen Teil der Daten beiseite. Diese werden wir dann am Ende dazu verwenden, um das Modell auf noch nicht gesehene Daten zu testen.
 
 ```{r}
 set.seed(1337)
@@ -196,7 +195,7 @@ final_sleep_data <- final_sleep_data_train
 
 ### Untersuchung der ersten These
 
-Zunächst untersuchen wie sich Stress auf die Schlafqualität auswirk. Dabei vergleichen wird die Variabel *Stress.Level* mit der Variabel *Quality.of.Sleep*.
+Zunächst untersuchen wir, wie sich Stress auf die Schlafqualität auswirkt. Dabei vergleichen wir die Variable *Stress.Level* mit der Variable *Quality.of.Sleep*.
 
 ```{r, message=FALSE}
 ggplot(
@@ -212,13 +211,13 @@ ggplot(
   )
 ```
 
-Die Grafik zeigt, dass die Schlafqualität mit zunehmenden Stress abnimmt. Sie hat eine starke negative Korrelation von **`r cor(final_sleep_data$Stress.Level, final_sleep_data$Quality.of.Sleep)`**
+Die Grafik zeigt, dass die Schlafqualität mit zunehmendem Stress abnimmt. Sie hat eine starke negative Korrelation von **`r cor(final_sleep_data$Stress.Level, final_sleep_data$Quality.of.Sleep)`**
 
 Die Schlafqualität bleibt in einem Bereich von 4 bis 9. Wobei der Durchschnitt **`r mean(final_sleep_data$Quality.of.Sleep)`** beträgt.
 
-Bis zu einem Stresslevel von 6 bleibt die Schlafqualität somit über dem Durschnitt. Befindet sich also relativ zum Datensatz im höheren Bereich. Ab einem Stresslevel von 6 fällt die Schlafqualität hingegen unter dem Durchschnitt.
+Bis zu einem Stresslevel von 6 bleibt die Schlafqualität somit über dem Durchschnitt. Befindet sich also relativ zum Datensatz im höheren Bereich. Ab einem Stresslevel von 6 fällt die Schlafqualität hingegen unter dem Durchschnitt.
 
-Dabei ist zu beachten, dass es sich um subjektive Daten handelt. Um eine genauerses Bild zu erhalten, betrachten wir im Folgenden, wie sich Stress auf die Schlafstörungen auswirkt. Dazu betrachten wir, wie groß der Anteil der Personen ist, die an Schlafstörungen leiden.
+Dabei ist zu beachten, dass es sich um subjektive Daten handelt. Um ein genaueres Bild zu erhalten, betrachten wir im Folgenden, wie sich Stress auf die Schlafstörungen auswirkt. Dazu betrachten wir, wie groß der Anteil der Personen ist, die an Schlafstörungen leiden.
 
 ```{r}
 stress_sleep_dis <- final_sleep_data %>%
@@ -234,7 +233,7 @@ stress_sleep_dis %>%
   scale_y_continuous(labels = scales::percent) +
   labs(
     title = "Stress und Schlafstörungen",
-    subtitle = "Anzahl der Schlafstörung relativ zu den Gesamten Personen",
+    subtitle = "Anzahl der Schlafstörung relativ zu den gesamten Personen",
     x = "Stresslevel (1 - 10)",
     y = "Schlafstörungen Anteil in %"
   )
@@ -242,13 +241,13 @@ stress_sleep_dis %>%
 
 Wie zu erkennen ist, liegt der Anteil der Schlafstörungen bei einem Stresslevel von 1 bis 6 unter 50 Prozent. Man kann sogar einen Abfall der Schlafstörungen bis zu einem Stresslevel von 6 erkennen. Ab dem Stresslevel von 6 steigt der Anteil der Schlafstörungen jedoch deutlich an.
 
-Trotz des anfänglischen Rückgangs kann man sagen, dass ein höheres Stresslevel mit einem erhöhten Auftreten von Schlafstörungen einhergeht.
+Trotz des anfänglichen Rückgangs kann man sagen, dass ein höheres Stresslevel mit einem erhöhten Auftreten von Schlafstörungen einhergeht.
 
 Damit bestätigen sich die vorherigen Ergebnisse und man kann sagen:
 
 **Weniger Stress wirkt sich positiv auf die Schlafqualität aus**
 
-Schauen wir uns als nächstes an wie sich körperliche Aktivität auf die Schlafqualität auswirkt.
+Schauen wir uns als nächstes an, wie sich körperliche Aktivität auf die Schlafqualität auswirkt.
 
 ```{r, message=FALSE}
 final_sleep_data %>%
@@ -260,19 +259,19 @@ final_sleep_data %>%
   scale_x_continuous(breaks = seq(0, 100, by = 10)) +
   labs(
     title = "Körperliche Aktivität, Schlafqualität und Stress",
-    x = "Täglische körperliche Aktivität in Minuten", 
+    x = "Tägliche körperliche Aktivität in Minuten", 
     y = "Schlafqualität (1 - 10)",
     color = "Stresslevel"
   )
 ```
 
-Es zeigt sich kein eindeutiger Zusammenhang zwischen körperlicher Aktivität und Schlafqualität. Es lässt sich jedoch leichten Anstiegt erkennen. Die Korrelation ist leicht positiv und liegt bei **`r cor(final_sleep_data$Physical.Activity.Level, final_sleep_data$Quality.of.Sleep)`**
+Es zeigt sich kein eindeutiger Zusammenhang zwischen körperlicher Aktivität und Schlafqualität. Es lässt sich jedoch ein leichter Anstieg erkennen. Die Korrelation ist leicht positiv und liegt bei **`r cor(final_sleep_data$Physical.Activity.Level, final_sleep_data$Quality.of.Sleep)`**
 
-Zudem sind zwei größere Ausreißer sichtbar. Einen bei einer guten Schlafqualität trotz körperlicher Aktivität und einer bei schlechter Schlafqualität trotz hoher körperlicher Aktivität. Diese haben jedoch ein hohes und niedriges Stresslevel. Die Schlafqualität ist in diesen Fällen also von Stresslevel beeinflusst.
+Zudem sind zwei größere Ausreißer sichtbar. Einen bei guter Schlafqualität trotz körperlicher Aktivität und einen bei schlechter Schlafqualität trotz hoher körperlicher Aktivität. Diese haben jedoch ein hohes und niedriges Stresslevel. Die Schlafqualität ist in diesen Fällen also vom Stresslevel beeinflusst.
 
 **Insgesamt deutet die Analyse darauf hin, dass Stress einen stärkeren Einfluss auf die Schlafqualität hat als die körperliche Aktivität.**
 
-Trotzdem scheint auch die körperliche Aktivität einen leichten einfluss auf die Schlafqualität zu haben.
+Trotzdem scheint auch die körperliche Aktivität einen leichten Einfluss auf die Schlafqualität zu haben.
 
 Um ein noch genaueres Bild zu erhalten, betrachten wir im Folgenden die Verteilung der Schlafstörungen auf die körperliche Aktivität.
 
@@ -285,16 +284,16 @@ final_sleep_data %>%
   scale_x_continuous(breaks = seq(0, 100, by = 10)) +
   theme(axis.title.y = element_blank()) +
   labs(
-    title = "Schlafstörung und Köperliche Aktivität",
-    x = "Täglische Körperliche Aktivität in Minuten"
+    title = "Schlafstörung und Körperliche Aktivität",
+    x = "Tägliche Körperliche Aktivität in Minuten"
   )
 ```
 
-Die Daten weise insgesamt eine hohe Spannweite auf. Es ist jedoch eine deutliche Häufung von Personen mit Schlafstörungen im Bereich geringer täglicher körperlicher Aktivität zu erkennen.
+Die Daten weisen insgesamt eine hohe Spannweite auf. Es ist jedoch eine deutliche Häufung von Personen mit Schlafstörungen im Bereich geringer täglicher körperlicher Aktivität zu erkennen.
 
-Dies korrespondiert mit dem vorherigen Darstellung und stützt die Annahme, dass mehr körperliche Aktivität die Schlafqualität positiv beeinflusst.
+Dies korrespondiert mit dem vorherigen Darstellungen und stützt die Annahme, dass mehr körperliche Aktivität die Schlafqualität positiv beeinflusst.
 
-Um den Zusammenhand zwichen körperlicher Aktivität und der Schlaqualität zu untersuchen, schhauen wir uns noch die tägliche Schrittzahl an. Die Schrittzahl dient hierbei als weiterer Indikator für die körperliche Aktivität.
+Um den Zusammenhang zwischen körperlicher Aktivität und der Schlafqualität zu untersuchen, schauen wir uns noch die tägliche Schrittzahl an. Die Schrittzahl dient hierbei als weiterer Indikator für die körperliche Aktivität.
 
 ```{r message=FALSE, warning=FALSE}
 final_sleep_data %>%
@@ -311,7 +310,7 @@ final_sleep_data %>%
   )
 ```
 
-Die Schtrittzahl zeigt keinen eindeutigen Zusammenhang zur Schlafqualität. Der stärkere Auslößer scheint auch hier das Stresslevel zu sein.
+Die Schrittzahl zeigt keinen eindeutigen Zusammenhang zur Schlafqualität. Der stärkere Auslöser scheint auch hier das Stresslevel zu sein.
 
 Zusätzlich vergleichen wir, ob die Anzahl der täglichen Schritte einen Zusammenhang mit Schlafstörungen hat.
 
@@ -323,18 +322,18 @@ final_sleep_data %>%
   geom_violin() +
   theme(axis.title.y = element_blank()) +
   labs(
-    title = "Schlafstörung und Täglische Schritte",
+    title = "Schlafstörung und Tägliche Schritte",
     x = "Tägliche Schritte"
   )
 ```
 
 
 
-Ähnlich wie im Diagramm *Schlafstörungen und körperliche Aktivität* weisen Personen ohne Schlafstörung eine größere Spannweite. Zudem kann man nur lecht erkennen, dass ein großteil der Personen mit Schlafstörung weniger tägliche Stritte habe, also die Personen ohne eine Schlafstörung.
+Ähnlich wie im Diagramm *Schlafstörungen und körperliche Aktivität* weisen Personen ohne Schlafstörung eine größere Spannweite. Zudem kann man nur leicht erkennen, dass ein Großteil der Personen mit Schlafstörung weniger tägliche Schritte haben, also die Personen ohne eine Schlafstörung.
 
-**Somit kann man aus den Diagrammen schlussfolgen, dass die Körperliche Aktivität eine leichten einfluss auf die Schlafqualität hat.**
+**Somit kann man aus den Diagrammen schlussfolgern, dass die körperliche Aktivität einen leichten Einfluss auf die Schlafqualität hat.**
 
-Somit lässt sich die These nur zum Teil bestätigen. Wenig Stress hat einen großen Einfluss auf die Schlafqualität. Dagegen hat die köperliche Aktivität nur einen leichten Einfluss auf die Schlafqualität.
+Somit lässt sich die These nur zum Teil bestätigen. Wenig Stress hat einen großen Einfluss auf die Schlafqualität. Dagegen hat die körperliche Aktivität nur einen leichten Einfluss auf die Schlafqualität.
 
 ### Untersuchung der zweiten These
 
@@ -355,9 +354,9 @@ ggplot(
 
 In der Grafik ist erkennbar, dass die Schlafqualität mit zunehmendem Alter ansteigt. Sie steigt aber nicht linear. Im Bereich vom Alter 37 bis zum Alter 47 gibt es einen Rückgang der Schlafqualität.
 
-Somit ergibt sich leicht positive Korrelation von **`r cor(final_sleep_data$Quality.of.Sleep, final_sleep_data$Age)`**.
+Somit ergibt sich eine leicht positive Korrelation von **`r cor(final_sleep_data$Quality.of.Sleep, final_sleep_data$Age)`**.
 
-Schauen wir uns ergänzent dazu noch an, wie sich das Alter auf die Schlafstörungen auswirkt.
+Schauen wir uns ergänzend dazu noch an, wie sich das Alter auf die Schlafstörungen auswirkt.
 
 ```{r}
 ggplot(
@@ -377,7 +376,7 @@ Um ein genaueres Ergebnis zu erhalten, müsste man sich noch weitere Daten ansch
 
 ## Daten aufbereiten
 
-Bereiten wir die Daten final auf, um ein trainingsbereiten Datensatz zu erhalten.
+Bereiten wir die Daten final auf, um einen trainingsbereiten Datensatz zu erhalten.
 
 ```{r}
 rec <- recipe(Quality.of.Sleep ~ ., data = final_sleep_data_train) %>%
@@ -410,7 +409,7 @@ lm_fit %>%
   summary()
 ```
 
-Schauen wir uns die Fehler der Vorhersage auf dem Gesamten Trainigsdatensatz an.
+Schauen wir uns die Fehler der Vorhersage auf dem gesamten Trainingsdatensatz an.
 
 ```{r, warning=FALSE}
 pred_lm <- predict(lm_fit, new_data = train_ready)
@@ -422,15 +421,15 @@ compare_lm <- train_ready %>%
 head(compare_lm)
 ```
 
-Nun berechnen anhand der Ergebnisse den RSME Wert.
+Nun berechnen wir anhand der Ergebnisse den RMSE Wert.
 
 ```{r}
 rmse(compare_lm, Quality.of.Sleep, .pred)
 ```
 
-Dieser liegt in einem guten Bereich. Somit scheinen die Vorhersagen vom Eigentlichen Wert nicht alzustark abzuweichen.
+Dieser liegt in einem guten Bereich. Somit scheinen die Vorhersagen vom eigentlichen Wert nicht allzu stark abzuweichen.
 
-Zudem führen wir hier noch eine Kreuzvalidierung durch um potenzielles Overfitting auszuschließen und die performense des Modells besser herauszufinden.
+Zudem führen wir hier noch eine Kreuzvalidierung durch, um potenzielles Overfitting auszuschließen und die Performance des Modells besser herauszufinden.
 
 ```{r}
 cv_splits <- vfold_cv(train_ready, v = 10, strata = Quality.of.Sleep)
@@ -450,11 +449,11 @@ cv_results <-
 cv_results %>% collect_metrics()
 ```
 
-Der RMSE Wert hat sich nur leicht verschlechterr somit können wir overfitting ausschließen
+Der RMSE Wert hat sich nur leicht verschlechtert, somit können wir Overfitting ausschließen
 
 Um zu schauen ob ein anderes Modell noch besser performen kann, schauen wir uns ein weiteres Modell an.
 
-### Entscheindungsbaum
+### Entscheidungsbaum
 
 Als nächstes schauen wir und das **Entscheidungsbaum** Modell an.
 
@@ -465,7 +464,7 @@ tree_fit <- tree_mod %>%
   fit(Quality.of.Sleep ~ ., data = train_ready)
 ```
 
-Betrachten wir auch hier die Fehler der Vorhersage auf dem Gesamten Trainigsdatensatz.
+Betrachten wir auch hier die Fehler der Vorhersage auf dem gesamten Trainingsdatensatz.
 
 ```{r}
 pred_tree <- predict(tree_fit, new_data = train_ready)
@@ -503,9 +502,9 @@ cv_results <-
 cv_results %>% collect_metrics()
 ```
 
-Die Kreuzvalidierung ergibt einen höheren RMSE Wert. Dieser ist ähnlich hoch wie der RMSE wert der linearen regression.
+Die Kreuzvalidierung ergibt einen höheren RMSE Wert. Dieser ist ähnlich hoch wie der RMSE Wert der linearen Regression.
 
-Somit versuchen wir es mit einem weitern Modell.
+Somit versuchen wir es mit einem weiteren Modell.
 
 ### Random Forest
 
@@ -519,7 +518,7 @@ forest_fit <- forest_mod %>%
   fit(Quality.of.Sleep ~ ., data = train_ready)
 ```
 
-Schauen wir uns die Fehler der Vorhersage auf dem Gesamten Trainigsdatensatz an.
+Schauen wir uns die Fehler der Vorhersage auf dem gesamten Trainingsdatensatz an.
 
 ```{r}
 
@@ -536,9 +535,9 @@ head(compare_forest)
 rmse(compare_forest, Quality.of.Sleep, .pred)
 ```
 
-Hier haben wir den geringsten RMSE Wert von alles bisher verwendente Modellen.
+Hier haben wir den geringsten RMSE Wert von allen bisher verwendeten Modellen.
 
-Um ein potenzielles overfitten auszuschließen führen wir auch hier eine Kreuzvalidierung durch.
+Um ein potenzielles Overfitten auszuschließen führen wir auch hier eine Kreuzvalidierung durch.
 
 ```{r}
 cv_splits <- vfold_cv(train_ready, v = 10, strata = Quality.of.Sleep)
@@ -558,15 +557,15 @@ cv_results <-
 cv_results %>% collect_metrics()
 ```
 
-Der RMSE wert ist nur leicht höher als der vorherige und fällt im Gegensatz zu den vorherigen Modellen immernoch am Geringsten aus.
+Der RMSE Wert ist nur leicht höher als der vorherige und fällt im Gegensatz zu den vorherigen Modellen immer noch am geringsten aus.
 
-Allem im allen performed also das **Random Forest** Modell am besten. Somit werden wir dies auch verwenden.
+Alles in allem performt also das **Random Forest** Modell am besten. Somit werden wir dies auch verwenden.
 
 ## Modelle optimieren
 
 Nun optimieren wir das **Random Forest** Modell noch.
 
-Wir verwenden dazu ein Reguläres Grid um die beste combination der Parameter **mtry** und **min_n** zu finden.
+Wir verwenden dazu ein reguläres Grid um die beste Kombination der Parameter **mtry** und **min_n** zu finden.
 
 ```{r}
 # Quelle: [1]
@@ -582,7 +581,7 @@ forest_wflow <- workflow() %>%
 forest_param <- forest_wflow %>% 
   extract_parameter_set_dials() %>%
   update(
-    mtry = mtry(c(1, 13))
+    mtry = mtry(c(1, 12))
   )
 
 forest_tune <- forest_wflow %>%
@@ -597,7 +596,7 @@ best_param <- select_best(forest_tune, metric = "rmse")
 best_param
 ```
 
-Mit dem Paremtern trainieren wir ein optimiertes Random Forest Modell.
+Mit den Parametern trainieren wir ein optimiertes Random Forest Modell.
 
 ```{r}
 final_forest_mod <- rand_forest(mtry = best_param$mtry, min_n = best_param$min_n, trees = 1000)  %>%
@@ -615,7 +614,7 @@ Baken wir den Testdatensatz zuerst um unseren finalen Testdatensatz zu bekommen.
 test_ready <- bake(prep_rec, new_data = final_sleep_data_test)
 ```
 
-Nun testen wir unser Modell mit dem fertigen Test Datensatz.
+Nun testen wir unser Modell mit dem fertigen Testdatensatz.
 
 ```{r}
 pred_test <- predict(final_forest_fit, new_data = test_ready)
@@ -639,9 +638,9 @@ Dieser liegt in einem niedrigen Bereich.
 
 Allem im allem kann man sagen, dass das Modell *Random Forest* am besten bei diesem Datensatz performt. Dies konnten wir durch das Vergleichen der RMSE Werte festlegen.
 
-Durch das tunen der Parameter *mtry* und *min_n* konnten wir die Performance noch verbessern. Somit haben wir am Ende ein gut performendes Modell mit dem man weiter arbeiten kann.
+Durch das tunen der Parameter *mtry* und *min_n* konnten wir die Performance noch verbessern. Somit haben wir am Ende ein gut performendes Modell mit dem sich gut weiterarbeiten lässt.
 
-Naturlich ist der Datensatz noch klein, somit müsste man das Modell auch mit mehr Daten testen um ein genaueres Ergebnis zu bekommen. Auch die Schlussfolgerung der Explorativen Datenanalyse würde durch mehr Daten und das einbeziehen von mehr Variablen ein eindeutigeres Ergebniss liefern.
+Natürlich ist der Datensatz noch klein, somit müsste man das Modell auch mit mehr Daten testen um ein genaueres Ergebnis zu bekommen. Auch die Schlussfolgerung der Explorativen Datenanalyse würde durch mehr Daten und das einbeziehen von mehr Variablen ein eindeutigeres Ergebnis liefern.
 
 # Quellen
 
